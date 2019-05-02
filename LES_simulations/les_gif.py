@@ -115,7 +115,7 @@ if __name__=='__main__':
     ax6p1.set_ylabel('Altitude (km)')
     ax6p1.set_xticklabels([])
     fig6.tight_layout(rect=[0,0,1,0.96])
-    fig6.show()
+#    fig6.show()
     def updatefig6(zi):
         line.set_ydata(case.DHARMA.z[zi]/1e3*np.array([1,1]))
         ctf1[0]=[ax6p2.contourf(xcens,ycens,case.VW.re_tau[zi,:],v['re'],cmap=plt.cm.jet)]
