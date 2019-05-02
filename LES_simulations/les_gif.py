@@ -116,17 +116,19 @@ if __name__=='__main__':
     ax6p1.set_xticklabels([])
     fig6.tight_layout(rect=[0,0,1,0.96])
     fig6.show()
-#    def updatefig6(zi):
-#        line.set_ydata(case.DHARMA.z[zi]/1e3*np.array([1,1]))
-#        ctf1[0]=ax6p2.contourf(xcens,ycens,case.VW.re_tau[zi,:],np.linspace(0,250,50),cmap=plt.cm.jet)
-#        ctf2[0]=ax6p3.contourf(xcens,ycens,np.trapz(Re_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),np.linspace(0,25,50),cmap=plt.cm.jet)
-#        ctf3[0]=ax6p4.contourf(xcens,ycens,case.VW.ve_tau[zi,:],np.linspace(0,0.5,50),cmap=plt.cm.jet)
-#        ctf4[0]=ax6p5.contourf(xcens,ycens,np.trapz(Ve_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),np.linspace(0,0.2,50),cmap=plt.cm.jet)
-#        plt.draw()
-#    t0=time.time()
-#    print('Generating GIF ...')
-#    anim = FuncAnimation(fig6, updatefig6, frames=np.arange(0, 96), interval=100)
-#    anim.save('GIFs/'+fig6_ttl+'dpi200'+version+'.gif', dpi=200, writer='imagemagick')
-#    t1=time.time()
-#    print('%d mins elapsed!'%(t1/60-t0/60))
+    def updatefig6(zi):
+        line.set_ydata(case.DHARMA.z[zi]/1e3*np.array([1,1]))
+        ctf1[0]=[ax6p2.contourf(xcens,ycens,case.VW.re_tau[zi,:],v['re'],cmap=plt.cm.jet)]
+        ctf2[0]=[ax6p3.contourf(xcens,ycens,np.trapz(Re_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['revw'],cmap=plt.cm.jet)]
+        ctf3[0]=[ax6p4.contourf(xcens,ycens,case.VW.ve_tau[zi,:],v['ve'],cmap=plt.cm.jet)]
+        ctf4[0]=[ax6p5.contourf(xcens,ycens,np.trapz(Ve_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['vevw'],cmap=plt.cm.jet)]
+        ctf5[0]=[ax6p6.contourf(xcens,ycens,case.dTau[band,zi,:],v['tu'],cmap=plt.cm.jet)]
+        ctf6[0]=[ax6p7.contourf(xcens,ycens,np.trapz(Tu_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['tu'],cmap=plt.cm.jet)]
+        plt.draw()
+    t0=time.time()
+    print('Generating GIF ...')
+    anim = FuncAnimation(fig6, updatefig6, frames=np.arange(0, 96), interval=100)
+    anim.save('GIFs/'+fig6_ttl+'dpi200'+version+'.gif', dpi=200, writer='imagemagick')
+    t1=time.time()
+    print('%d mins elapsed!'%(t1/60-t0/60))
 
