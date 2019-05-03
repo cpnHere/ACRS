@@ -1115,10 +1115,9 @@ class DHARMA_onmp(object):
         #calculating vertically weighted number concentration
         dN_vw=np.trapz(self.DHARMA.dN_drops.sum(axis=0)*w_tau,tau,axis=0)
         #calculating vertically weighted cloud optical thickness
-        Tau_vw=np.trapz(tau*w_tau,tau,axis=0)
         end=time.time()
         print('%0.2f mins elapsed!'%((end-start)/60))
-        return Re_vw,Ve_vw,Tau_vw,dN_vw,re_tau,ve_tau,w_tau,tau
+        return Re_vw,Ve_vw,dN_vw,re_tau,ve_tau,w_tau,tau
     def setup_reVW(self,mie_name,lesCname,dgSZA,dgVZA,a=1,b=0,lesBinEd=None,mie_path=None,band=None,fpath=None,\
                    replace=None):
         '''
@@ -1128,7 +1127,7 @@ class DHARMA_onmp(object):
         from vertical_weighting_psudo_ret import LES_psudo_rets
         VW=LES_psudo_rets(self,mie_name,mie_path,dgSZA,dgVZA,a,b,band=band,replace=replace)
         if VW.replace=='1':
-            VW.Re,VW.Ve,VW.Tau,VW.dN,VW.re_tau,VW.ve_tau,VW.w_tau,VW.tau=self.find_reVW(mie_name,lesCname,dgSZA,dgVZA,a=a,b=b,mie_path=mie_path,band=band)        
+            VW.Re,VW.Ve,VW.dN,VW.re_tau,VW.ve_tau,VW.w_tau,VW.tau=self.find_reVW(mie_name,lesCname,dgSZA,dgVZA,a=a,b=b,mie_path=mie_path,band=band)        
             VW.saveVW()
         self.VW=VW
     def findLWP(self,obj=None):
