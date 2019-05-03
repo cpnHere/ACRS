@@ -36,10 +36,12 @@ if __name__=='__main__':
     #colorbars
     v={'re':np.linspace(0,25,50),'ve':np.linspace(0,0.2,50) ,'revw':np.linspace(0,25,50),'vevw':np.linspace(0,0.2,50)}
     c={'re':np.arange(0,25.1,5) ,'ve':np.arange(0,0.21,0.1) ,'revw':np.arange(0,25.1,5) ,'vevw':np.arange(0,0.21,0.1)}  
-    v['tu']=np.linspace(0,30,50)
-    c['tu']=np.arange(0,30.1,10)
-    version='V4'
-
+    v['dTau']=np.linspace(0,1.5,50)
+    c['dTau']=np.arange(0,1.51,0.5)
+    v['wdTau']=np.linspace(0,1,50)
+    c['wdTau']=np.arange(0,1.1,0.5)
+    version='V5'
+    verNotes='DYCOMS2 first complete example.'
     #DYCOMS2 end ---------------------------------------------------------------------------------------
     '''
     #ATEXc ----------------------------------------------------------------------------------------------
@@ -92,43 +94,53 @@ if __name__=='__main__':
     ax6p7=plt.subplot2grid((2,10),(1,7),colspan=3,aspect='equal')
     xcens=case.x*1e-3#km
     ycens=case.x*1e-3#km
-    ax6p1.plot(case.VW.tau.sum(axis=(1,2))/case.VW.tau.sum(axis=(1,2)).max(),case.DHARMA.z/1e3)
+    ax6p1.plot(case.VW.tau.sum(axis=(1,2))/case.VW.tau.sum(axis=(1,2)).max(),case.DHARMA.z/1e3)    
 #    ax6p1.set_xscale('log')
-    zi=95
+    zi=0
     Re_vw_tau=case.VW.re_tau*case.VW.w_tau
     Ve_vw_tau=case.VW.ve_tau*case.VW.w_tau
     Tu_vw_tau=case.VW.tau*case.VW.w_tau
+    ctop_i=np.min(np.where(np.isclose(case.VW.tau.mean(axis=(1,2)),0)))
     line,=ax6p1.plot(np.array([0,1]),case.DHARMA.z[zi]/1e3*np.array([1,1]),'k-',linewidth=3)
+    ax6p1.plot(np.array([0,1]),case.DHARMA.z[ctop_i]/1e3*np.array([1,1]),'k--',linewidth=3)
+    lnTx=ax6p1.text(0.5,case.DHARMA.z[zi]/1e3+0.02,r'$\tau^*$')
+    ax6p1.text(0.1,case.DHARMA.z[ctop_i]/1e3+0.02,r'$\tau=0$',size=10)
     ax6p1.set_ylim(0,case.DHARMA.z[-1]/1e3)
     ctf1=[ax6p2.contourf(xcens,ycens,case.VW.re_tau[zi,:],v['re'],cmap=plt.cm.jet)]
     ctf2=[ax6p3.contourf(xcens,ycens,np.trapz(Re_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['revw'],cmap=plt.cm.jet)]
     ctf3=[ax6p4.contourf(xcens,ycens,case.VW.ve_tau[zi,:],v['ve'],cmap=plt.cm.jet)]
     ctf4=[ax6p5.contourf(xcens,ycens,np.trapz(Ve_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['vevw'],cmap=plt.cm.jet)]
-    ctf5=[ax6p6.contourf(xcens,ycens,case.dTau[band,zi,:],v['tu'],cmap=plt.cm.jet)]
-    ctf6=[ax6p7.contourf(xcens,ycens,np.trapz(Tu_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['tu'],cmap=plt.cm.jet)]
-    cpn.add_cb(fig6,ctf1[0],ax6p2,pad=0.3,ticks=c['re']  ,label=r'$r_e(Z)$ $\mu m$')
-    cpn.add_cb(fig6,ctf2[0],ax6p3,pad=0.3,ticks=c['revw'],label=r'$r_e^{vw}(Z)$ $\mu m$')
-    cpn.add_cb(fig6,ctf3[0],ax6p4,pad=0.3,ticks=c['ve']  ,label=r'$v_e(Z)$')
-    cpn.add_cb(fig6,ctf4[0],ax6p5,pad=0.3,ticks=c['vevw'],label=r'$v_e^{vw}(Z)$')
-    cpn.add_cb(fig6,ctf5[0],ax6p6,pad=0.3,ticks=c['tu']  ,label=r'$COT(Z)$')
-    cpn.add_cb(fig6,ctf6[0],ax6p7,pad=0.3,ticks=c['tu']  ,label=r'$COT^{vw}(Z)$')
+    ctf5=[ax6p6.contourf(xcens,ycens,case.dTau[band,zi,:],v['dTau'],cmap=plt.cm.jet)]
+    ctf6=[ax6p7.contourf(xcens,ycens,np.trapz(case.VW.w_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['wdTau'],cmap=plt.cm.jet)]
+    cpn.add_cb(fig6,ctf1[0],ax6p2,pad=0.3,ticks=c['re']  ,label=r'$r_e(\tau^*)$ $\mu m$')
+    cpn.add_cb(fig6,ctf2[0],ax6p3,pad=0.3,ticks=c['revw'],label=r'$r_e^{vw}(\tau^*)$ $\mu m$')
+    cpn.add_cb(fig6,ctf3[0],ax6p4,pad=0.3,ticks=c['ve']  ,label=r'$v_e(\tau^*)$')
+    cpn.add_cb(fig6,ctf4[0],ax6p5,pad=0.3,ticks=c['vevw'],label=r'$v_e^{vw}(\tau^*)$')
+    cpn.add_cb(fig6,ctf5[0],ax6p6,pad=0.3,ticks=c['dTau']  ,label=r'$d\tau (z)$')
+    cpn.add_cb(fig6,ctf6[0],ax6p7,pad=0.3,ticks=c['wdTau'] ,label=r'$\int_0^{\tau^*} w(\tau)d\tau$')
     ax6p1.set_ylabel('Altitude (km)')
     ax6p1.set_xticklabels([])
     fig6.tight_layout(rect=[0,0,1,0.96])
+#    ax6p1.legend(frameon=False,prop={'size':8})
+#    savefig(fig6,fig6_ttl)
 #    fig6.show()
     def updatefig6(zi):
         line.set_ydata(case.DHARMA.z[zi]/1e3*np.array([1,1]))
+        lnTx.set_y(case.DHARMA.z[zi]/1e3+0.02)
         ctf1[0]=[ax6p2.contourf(xcens,ycens,case.VW.re_tau[zi,:],v['re'],cmap=plt.cm.jet)]
         ctf2[0]=[ax6p3.contourf(xcens,ycens,np.trapz(Re_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['revw'],cmap=plt.cm.jet)]
         ctf3[0]=[ax6p4.contourf(xcens,ycens,case.VW.ve_tau[zi,:],v['ve'],cmap=plt.cm.jet)]
         ctf4[0]=[ax6p5.contourf(xcens,ycens,np.trapz(Ve_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['vevw'],cmap=plt.cm.jet)]
-        ctf5[0]=[ax6p6.contourf(xcens,ycens,case.dTau[band,zi,:],v['tu'],cmap=plt.cm.jet)]
-        ctf6[0]=[ax6p7.contourf(xcens,ycens,np.trapz(Tu_vw_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['tu'],cmap=plt.cm.jet)]
+        ctf5[0]=[ax6p6.contourf(xcens,ycens,case.dTau[band,zi,:],v['dTau'],cmap=plt.cm.jet)]
+        ctf6[0]=[ax6p7.contourf(xcens,ycens,np.trapz(case.VW.w_tau[:zi,:],case.VW.tau[:zi,:],axis=0),v['wdTau'],cmap=plt.cm.jet)]
         plt.draw()
     t0=time.time()
     print('Generating GIF ...')
     anim = FuncAnimation(fig6, updatefig6, frames=np.arange(0, 96), interval=100)
     anim.save('GIFs/'+fig6_ttl+'dpi200'+version+'.gif', dpi=200, writer='imagemagick')
     t1=time.time()
+    print('Version Notes: '+verNotes)
     print('%d mins elapsed!'%(t1/60-t0/60))
+    print('-------------------------------------------------------------------')
+    
 
