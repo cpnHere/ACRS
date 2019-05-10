@@ -735,8 +735,8 @@ class LES_case(object):
             f=(3D-1D)/1D
         VZAi: viewing zenith angle index (usually 61 for zero degrees)
         '''
-        self.bias3D1D =self.RT.MeanPRad[VZAi,:,:,0]-self.RT1D.MeanPRad[VZAi,:,:,0]
-        self.impFac3D =self.bias3D1D/self.RT1D.MeanPRad[VZAi,:,:,0]
+        self.bias3D1D =self.RT.MeanPRad[VZAi,:]-self.RT1D.MeanPRad[VZAi,:]
+        self.impFac3D =self.bias3D1D/self.RT1D.MeanPRad[VZAi,:]
     def get_bin_defs(self,vci):
         '''
         To get pre-defined bin arrays for MSCART LES reflectance simulations
