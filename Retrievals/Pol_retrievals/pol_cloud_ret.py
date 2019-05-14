@@ -231,11 +231,11 @@ def Example01():
     ax5.set_xlabel('km')
     ax5.set_ylabel('km')
     fig5.show()
-def getGuess(cname,method,rTyp):
+def getGuess(cname,method,rTyp,tail):
     '''
     To read abc for domain mean retrievals from previous results. 
     '''
-    filename=cname+'_'+method+'_mean_pol_ret'
+    filename=cname+'_'+method+'_mean'+tail
     abc=None
     if os.path.isfile(filename+'.pkl'):
         print('Domain mean retrievals exist: '+filename)
@@ -263,6 +263,7 @@ if __name__=='__main__':
     tail=str(sys.argv[6])   #Tail to the output file 
     spRT=False               #Use special RT runs with higher angular resolution
     mpi=True and (rTyp=='full')               #To use MPI version
+    case=str(sys.argv[7])
 
 #    band='0p860'
 #    sza=140 
@@ -284,11 +285,19 @@ if __name__=='__main__':
     #--------------------------------------------------------------------------
     if not(spRT):
         # Q observations from RT simulations
-        LEScase=LES_case('DYCOMS2_dharma_008036_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH2e6.hdf5',\
+        if case=='DY':
+            LEScase=LES_case('DYCOMS2_dharma_008036_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH2e6.hdf5',\
                          '/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/',\
                          RT1Dname='DYCOMS2_dharma_008036_b'+band+'_MSCART_1D_bins_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e5.hdf5')
-    
-
+        elif case=='RC':
+            LEScase=LES_case('RICO_dharma_005044_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e6.hdf5',\
+                         '/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/',\
+                         RT1Dname='RICO_dharma_005044_b'+band+'_MSCART_1D_bins_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e5.hdf5')
+        elif case=='AC':
+            LEScase=LES_case('ATEXc_dharma_007877_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e6.hdf5',\
+                         '/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/',\
+                         RT1Dname='ATEXc_dharma_007877_b'+band+'_MSCART_1D_bins_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e5.hdf5')
+                
     '''
     Corelation coefficient method (yet to be investigated)
     ======================================================
@@ -338,7 +347,10 @@ if __name__=='__main__':
         Q_in2= RT.MeanPRad[:,:,:,1]
     else:
         print('Error! Give valid rTyp!')
-    cname=RT.fname[0].astype(str).split('.',1)[0]
+    try:
+        cname=RT.fname.split('.',1)[0]
+    except AttributeError:
+        cname=(RT.fname[0].astype(str)).split('.',1)[0]
     savename=cname+'_'+method+'_'+rTyp+tail
     print(savename+' will be saved')
 
@@ -348,7 +360,7 @@ if __name__=='__main__':
     P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method)
     #gemet=4*(muS+muV)*0+1#No geometric correction
     gemet=4*(muS+muV)
-    ygabc=getGuess(cname,method,rTyp)   
+    ygabc=getGuess(cname,method,rTyp,tail)   
     x=obsSca[P.Q_a1:P.Q_a2]
     start=time.time()
     if Q_in2.ndim==3:
