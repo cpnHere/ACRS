@@ -40,7 +40,7 @@ def savefig(fig,fig_ttl):
     cpn.savefig(fig,fig_ttl,'figures/')
 if __name__=='__main__':
     cpn.setup_figures(plt)
-    sza='120'
+    sza='160'
     vza=0
     #DYCOMS-II-----------------------------------------------------------------
     '''
@@ -63,10 +63,20 @@ if __name__=='__main__':
     '''
 
     #ATEXc-----------------------------------------------------------------
-    #'''
+    '''
     les_new_path='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/'
     
     les_name='ATEXc_dharma_007877';NPH3D='1e6';NPH1D='1e5'
+    DYC0p860_sza=LES_case(les_name+'_b0p860_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e6.hdf5',les_new_path,\
+                            RT1Dname=les_name+'_b0p860_MSCART_1D_bins_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5')
+    DYC2p13_sza =LES_case(les_name+'_b2p13_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e6.hdf5',les_new_path,\
+                            RT1Dname=les_name+'_b2p13_MSCART_1D_bins_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5')
+    '''
+    #RICO-----------------------------------------------------------------
+    #'''
+    les_new_path='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/'
+    
+    les_name='RICO_dharma_005044';NPH3D='1e6';NPH1D='1e5'
     DYC0p860_sza=LES_case(les_name+'_b0p860_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e6.hdf5',les_new_path,\
                             RT1Dname=les_name+'_b0p860_MSCART_1D_bins_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5')
     DYC2p13_sza =LES_case(les_name+'_b2p13_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e6.hdf5',les_new_path,\
@@ -88,6 +98,7 @@ if __name__=='__main__':
             'NJK_retrievals_'+les_name+'_b2p13_b0p860_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH'+NPH3D)
     NJK_ret1D=cpn.load_obj(ret_save_dir+\
             'NJK_retrievals_'+les_name+'_b2p13_b0p860_MSCART_1D_bins_SZA'+sza+'_SAA000_VAA000plus_NPH'+NPH3D)
+    '''
     '''
     #Plotting figure
     fig2,ax2=plt.subplots(3,2,figsize=(6,8),subplot_kw={'aspect':'equal'})
@@ -119,7 +130,7 @@ if __name__=='__main__':
         ticks.set_rotation(45)
     fig2.tight_layout(rect=[0,0,1,0.95])
     fig2.show()
-
+    '''
     
     
     
