@@ -369,8 +369,8 @@ if __name__=='__main__':
     x=obsSca[P.Q_a1:P.Q_a2]
     start=time.time()
     if Q_in2.ndim==3:
+        y=np.einsum('ijk,i->ijk',-Q_in2,4*gemet) 
         if mpi:
-            y=np.einsum('ijk,i->ijk',-Q_in2,4*gemet) 
             mpi_data={'x':x,'y':y,'ygabc':ygabc,'P':P,'savename':savename}
             cpn.save_obj(mpi_data,'mpi_data_'+savename,rp=True)
             print('Running with MPI...')
