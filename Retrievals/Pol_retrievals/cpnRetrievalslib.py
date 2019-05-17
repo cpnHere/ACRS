@@ -919,6 +919,7 @@ def fitBreon_noRsq(x,y,P,ygabc=None):
         return a*P.getP(Theta)+b*np.deg2rad(Theta)+c
     def fit(x,y,P,F,ygabc):
         R_sq=0.0
+        abc=np.array([1,1,1])*np.nan;Re,Ve=np.nan,np.nan #For failed retrievals
         for i in P.Re:
             for j in P.Ve:
                 P.set_reve(i,j)
