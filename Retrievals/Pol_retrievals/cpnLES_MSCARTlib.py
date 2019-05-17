@@ -151,6 +151,7 @@ class POLCARTdset(object):
                 self.MeanPRad=np.transpose(MeanPRad2,(0,1,2,3))
                 self.RMSEPRad=np.transpose(RMSEPRad2,(0,1,2,3))
                 self.cc3D="3D"
+        data.close()
             #number of sources, num of viewing polar angles, 
     def readMSCART(self,fname,fdpath=None,bm=False,clm=False):
         #read MSCART benchmark results (from Dr. Wang)
@@ -200,6 +201,7 @@ class POLCARTdset(object):
         else:
             self.MeanPRad=MeanPRad
             self.RMSEPRad=RMSEPRad
+        data.close()
         #number of sources, num of viewing polar angles, 
     def readMCPOL(self,fname,fdpath=None):
         #read MCPOL results from Dans
@@ -360,7 +362,7 @@ class POLCARTdset(object):
         except KeyError:
             print('WARNING!!!!!! NO "ScatA" in '+filename)
             print('Check SZA,VZA,SAA,VAA and then run set_ScatA() to get appropriate scattering angles.')
-
+        f.close()
     def find_obVZA_ix(self,VZA):
         #Return the index that corresponds to the give VZA
         if VZA==-20.0:
@@ -717,7 +719,11 @@ class LES_case(object):
             self.RT1D.readPOLCARThdf5(MSCARThdf1D,base_dir+'1Druns/results/LESb'+self.band+'_bins/')
             self.rotate_1D_domain()
         self.xcens=(self.RT_field.xgrd[1:]+self.RT_field.xgrd[0:-1])/2
-        self.ycens=(self.RT_field.ygrd[1:]+self.RT_field.ygrd[0:-1])/2   
+        self.ycens=(self.RT_field.ygrd[1:]+self.RT_field.ygrd[0:-1])/2  
+        if type(self.RT.fname) is np.ndarray:
+            self.RT.fname=self.RT.fname[0].astype(str)
+        if type(self.RT1D.fname) is np.ndarray:
+            self.RT1D.fname=self.RT1D.fname[0].astype(str)
     def rotate_1D_domain(self,):
         '''
         Transpose MeanPRad and RMSEPRad arrays of the 1D results to be matched with 3D
