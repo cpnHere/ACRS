@@ -112,13 +112,13 @@ def setup_figures(plt):
     plt.rc('ytick', labelsize=14)
     plt.rc('lines',linewidth=2.0)
     
-def sub_labels(ax,clr='k'):
+def sub_labels(ax,clr='k',x=0.01,y=0.9):
     '''
     Add subfigure labels
     '''
     axs=ax.flat
     for n, ax in enumerate(axs):
-        ax.text(0.01, 0.9, '('+string.ascii_lowercase[n]+')', transform=ax.transAxes,
+        ax.text(x, y, '('+string.ascii_lowercase[n]+')', transform=ax.transAxes,
                 size=15,color=clr)
         
 def add_common_cb(fig,ctf,ts=None,label=None):
