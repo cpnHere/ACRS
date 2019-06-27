@@ -22,7 +22,7 @@ def savefig(fig,fig_ttl):
 def iqu_cb(fig,ctf,ax,ticks=None,orientation='horizontal',label='label',pad=0.2):
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("bottom", size="5%", pad=pad)
-    if ticks==None:    
+    if ticks is None:    
         fig.colorbar(ctf, cax=cax,orientation=orientation,label=label)
     else:
         fig.colorbar(ctf, cax=cax,ticks=ticks,orientation=orientation,label=label)
