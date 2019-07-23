@@ -362,6 +362,8 @@ class POLCARTdset(object):
         except KeyError:
             print('WARNING!!!!!! NO "ScatA" in '+filename)
             print('Check SZA,VZA,SAA,VAA and then run set_ScatA() to get appropriate scattering angles.')
+        if type(self.fname) is np.ndarray:
+            self.fname=self.fname[0].astype(str)
         f.close()
     def find_obVZA_ix(self,VZA):
         #Return the index that corresponds to the give VZA
