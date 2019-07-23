@@ -99,6 +99,11 @@ def load_obj(name,encoding='ASCII'):
         obj=pickle.load(f,encoding=encoding)
         f.close()
     return obj
+def idx_closest(arr,val):
+    '''
+    Returns the clossest index of arr to value val.
+    '''
+    return abs(arr-val).argmin()
 '''
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FIGURES
