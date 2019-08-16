@@ -11,6 +11,7 @@ Frequently used common python library
 """
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator)
 import os,string
 import scipy.signal as signal
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
@@ -110,12 +111,29 @@ FIGURES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 '''
 def setup_figures(plt):
-    plt.rc('font', family='serif',weight='bold',size=16)
-#    plt.rc('xtick', labelsize='x-small')
-#    plt.rc('ytick', labelsize='x-small')
-    plt.rc('xtick', labelsize=14)
-    plt.rc('ytick', labelsize=14)
-    plt.rc('lines',linewidth=2.0)
+    '''
+        xtick.labelsize: 16
+        ytick.labelsize: 16
+        font.size: 15
+        figure.autolayout: True
+        figure.figsize: 7.2,4.45
+        axes.titlesize : 16
+        axes.labelsize : 17
+        lines.linewidth : 2
+        lines.markersize : 6
+        legend.fontsize: 13
+        mathtext.fontset: stix
+        font.family: STIXGeneral
+        Ref:-http://aeturrell.com/2018/01/31/publication-quality-plots-in-python/
+    '''
+#    plt.rc('font', family='serif',weight='bold',size=16)
+    plt.rc('font', family='STIXGeneral',weight='bold',size=15)
+    plt.rc('xtick', labelsize=16)
+    plt.rc('ytick', labelsize=16)
+    plt.rc('lines',linewidth=2.0,markersize=6)
+    plt.rc('legend',fontsize=12,frameon=False)
+    plt.rc('axes',titlesize=16,labelsize=17)
+    plt.rc('mathtext',fontset='stix')
     
 def sub_labels(ax,clr='k',x=0.01,y=0.9):
     '''
@@ -287,4 +305,21 @@ def array3D_slice(axis,array,x,y,z,slice_i,fig,ax,mnmx=None,cb=True,cb_label='la
     if cb:
         fig.colorbar(m,ax=ax,label=cb_label)
     fig.show() 
+def axBorderOff(ax,sides=['top']):
+    '''
+    To remove box without removing axis labels.
+    '''
+    for s in sides:
+        ax.spines[s].set_visible(False)
+def multiple_ticks(ax_XY,major_step,minor_step=None,major_format='%0.1f'):
+    '''
+    ax_XY: matplotlib.axis.YAxis or matplotlib.axis.XAxis
+            ax[0,0].yaxis or ax[0,0].xaxis
+    '''
+    ax_XY.set_major_locator(MultipleLocator(major_step))
+    ax_XY.set_major_formatter(FormatStrFormatter(major_format))
+    if minor_step is not None:
+        ax_XY.set_minor_locator(MultipleLocator(minor_step))
+    else:
+        ax_XY.set_minor_locator(AutoMinorLocator())
 
