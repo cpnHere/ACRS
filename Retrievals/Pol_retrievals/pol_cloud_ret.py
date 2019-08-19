@@ -264,6 +264,7 @@ if __name__=='__main__':
     spRT=False               #Use special RT runs with higher angular resolution
     mpi=True and (rTyp=='full')               #To use MPI version
     case=str(sys.argv[7])
+    pBow=True               #Use primary bow
 
 #    band='0p860'
 #    sza=140 
@@ -362,7 +363,7 @@ if __name__=='__main__':
     muV=np.cos(np.deg2rad(RT.VZA))
     muS=np.cos(np.deg2rad(180-RT.SZA))
     obsSca=RT.ScatA
-    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method)
+    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method,primaryBow=pBow)
     #gemet=4*(muS+muV)*0+1#No geometric correction
     gemet=4*(muS+muV)
     ygabc=getGuess(cname,method,rTyp,tail)   
