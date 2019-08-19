@@ -784,11 +784,15 @@ class Pmat(object):
         Breon   :Breon et. al. 2005 
         BreonMod:Breon et. al. 2005 albeit F=aP+b*cos()**2+c
     '''
-    def __init__(self,Re,Ve,MieA,MieP12,ObsA,method='Breon'):
+    def __init__(self,Re,Ve,MieA,MieP12,ObsA,method='Breon',primaryBow=False):
         print('Pol. ret. method: '+method)
         self.method=method
-        slt=145 #left scattering angle
-        srt=165 #right scattering angle
+        if primaryBow:
+            slt=135 #left scattering angle
+            srt=165 #right scattering angle
+        else:
+            slt=145 #left scattering angle
+            srt=165 #right scattering angle
         self.Re=Re
         self.Ve=Ve
         #Selecting matching observation scattering angles to the library
