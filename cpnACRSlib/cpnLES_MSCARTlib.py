@@ -444,6 +444,19 @@ class POLCARTdset(object):
             lP=np.sqrt(iqu[1]**2+iqu[2]**2)
             DolP=lP/iqu[0]
             return DolP,lP
+    def remove_redundant_nadir(self,removNadir_i=60):
+        '''
+        When complete principle-plane gemetries are considered, it would be 
+        two sets of VZA (0 to 60) for each VAA=0 and 180. So the nadir geometry
+        is considered twice. 
+        This is to remove columns correspond to the additional angle zero.
+        '''
+        self.VZA     =np.delete(self.VZA,removNadir_i)
+        self.MeanPRad=np.delete(self.MeanPRad,removNadir_i,0)
+        self.RMSEPRad=np.delete(self.RMSEPRad,removNadir_i,0)
+        if 'ScatA' in vars(self):
+            self.ScatA=np.delete(self.ScatA,removNadir_i)
+            
         
 class LES_field(object):
     def __init__(self,fname,dpath=None):
