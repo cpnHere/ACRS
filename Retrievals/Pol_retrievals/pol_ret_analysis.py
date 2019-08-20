@@ -20,7 +20,7 @@ import cpnCommonlib as cpn
 def savefig(fig,fig_ttl):
     cpn.savefig(fig,fig_ttl,'figures/')
 class S: pass
-def check_fit(Q_in2,abc,ret_Re,ret_Ve,Rsq,P12Lib,LEScase,method):
+def check_fit(Q_in2,abc,ret_Re,ret_Ve,Rsq,P12Lib,LEScase,method,primaryBow=False):
     '''
     To check the fit between observed F and library F
     LEScase: cpnLES_MSCARTlib.LEScase
@@ -29,7 +29,7 @@ def check_fit(Q_in2,abc,ret_Re,ret_Ve,Rsq,P12Lib,LEScase,method):
     muV=np.cos(np.deg2rad(LEScase.RT.VZA))
     muS=np.cos(np.deg2rad(180-LEScase.RT.SZA))    
     obsSca=LEScase.RT.ScatA
-    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method)
+    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method,primaryBow=primaryBow)
     P.set_reve(ret_Re,ret_Ve)
     fig6,ax6=plt.subplots(figsize=(8,4))
     ax6.plot(obsSca[P.Q_a1:P.Q_a2],P.imitateF(obsSca[P.Q_a1:P.Q_a2],*abc),'g.--',label='fit')
@@ -41,13 +41,13 @@ def check_fit(Q_in2,abc,ret_Re,ret_Ve,Rsq,P12Lib,LEScase,method):
     ax6.legend(frameon=False,loc='best')
     return fig6,ax6
 
-def check_fit2(y,x,abc,ret_Re,ret_Ve,Rsq,P12Lib,LEScase,method):
+def check_fit2(y,x,abc,ret_Re,ret_Ve,Rsq,P12Lib,LEScase,method,primaryBow=False):
     '''
     To check the fit between observed F and library F
     LEScase: cpnLES_MSCARTlib.LEScase
     P12Lib: cpnRetrievalslib.P12Lib
     '''
-    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],LEScase.RT.ScatA,method=method)
+    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],LEScase.RT.ScatA,method=method,primaryBow=primaryBow)
     P.set_reve(ret_Re,ret_Ve)
     fig6,ax6=plt.subplots(figsize=(8,4))
     ax6.plot(x,P.imitateF(x,*abc),'g.--',label='fit')
