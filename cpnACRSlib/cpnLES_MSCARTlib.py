@@ -739,6 +739,8 @@ class LES_case(object):
             self.RT.fname=self.RT.fname[0].astype(str)
         if type(self.RT1D.fname) is np.ndarray:
             self.RT1D.fname=self.RT1D.fname[0].astype(str)
+        self.RT.remove_redundant_nadir()
+        self.RT1D.remove_redundant_nadir()
     def rotate_1D_domain(self,):
         '''
         Transpose MeanPRad and RMSEPRad arrays of the 1D results to be matched with 3D
