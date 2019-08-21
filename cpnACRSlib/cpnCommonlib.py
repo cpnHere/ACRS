@@ -131,7 +131,7 @@ def setup_figures(plt):
     plt.rc('xtick', labelsize=16)
     plt.rc('ytick', labelsize=16)
     plt.rc('lines',linewidth=2.0,markersize=6)
-    plt.rc('legend',fontsize=12,frameon=False)
+    plt.rc('legend',fontsize=14,frameon=False)
     plt.rc('axes',titlesize=16,labelsize=17)
     plt.rc('mathtext',fontset='stix')
     
