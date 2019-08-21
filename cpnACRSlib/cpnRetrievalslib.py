@@ -798,8 +798,7 @@ class Pmat(object):
         #Selecting matching observation scattering angles to the library
         p12_a1=int(np.argwhere(MieA==slt))
         p12_a2=int(np.argwhere(MieA==srt))
-        Q_a1=np.argmin(abs(ObsA-slt))
-        Q_a2=np.argmin(abs(ObsA-srt))
+        Q_a1,Q_a2=self.findQa1a2_2(ObsA,slt,srt)
         if Q_a1>Q_a2:
             Q_a1,Q_a2=Q_a2,Q_a1
         theQ=ObsA[Q_a1:Q_a2]
@@ -814,6 +813,33 @@ class Pmat(object):
         self.ScatA=theQ#Scattering angles of ther self.MieP12_itp
         self.Q_a1=Q_a1
         self.Q_a2=Q_a2
+    def findQa1a2_1(self,ObsA,slt,srt):
+        Q_a1=np.argmin(abs(ObsA-slt))
+        Q_a2=np.argmin(abs(ObsA-srt))
+        return Q_a1,Q_a2
+    def findQa1a2_2(self,ObsA,slt,srt):
+        q_a1=np.argwhere(abs(ObsA-slt)<0.01)
+        q_a2=np.argwhere(abs(ObsA-srt)<0.01)
+        if q_a1.size==1 and q_a2.size==1:
+            #only 1 occurrence of each angle.
+            Q_a1,Q_a2=self.findQa1a2_1(ObsA,slt,srt)
+        elif q_a1.size==1 or q_a2.size==1:
+            #either one angle has only one occurrence
+            argsDiff=abs(q_a1-q_a2)
+            if argsDiff.size==q_a1.size:
+                Q_a1=q_a1[np.where(argsDiff==(srt-slt))]
+                Q_a2=q_a2
+            elif argsDiff.size==q_a2.size:
+                Q_a2=q_a2[np.where(argsDiff==(srt-slt))]
+                Q_a1=q_a1
+        elif q_a1.size==q_a2.size:
+            #both angles has same number of occurrences
+            argsDiff=abs(q_a1-q_a2)
+            Q_a1=q_a1[np.where(argsDiff==(srt-slt))]
+            Q_a2=q_a2[np.where(argsDiff==(srt-slt))]
+        else:
+            print('!!! Check whether required scattering angle range is available in the ObsA !!!!')
+        return np.squeeze(Q_a1),np.squeeze(Q_a2)
     def set_reve(self,re,ve):
         '''
         To set re and ve values. 
