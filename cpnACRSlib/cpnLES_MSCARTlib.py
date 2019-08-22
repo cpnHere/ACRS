@@ -749,7 +749,7 @@ class LES_case(object):
             self.rotate1D='done'
             self.RT1D.MeanPRad=self.RT1D.MeanPRad.swapaxes(1,2)
             self.RT1D.RMSEPRad=self.RT1D.RMSEPRad.swapaxes(1,2)
-            print('1D domain rotated')
+            #print('1D domain rotated')
         elif self.rotate1D=='done':
             print('Already rotated')
     def find_3DimpFac(self,VZAi):
