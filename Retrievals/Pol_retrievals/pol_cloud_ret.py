@@ -8,7 +8,7 @@ Chamara Rajapakshe
 (cpn.here@umbc.edu)
 ********************************************
 Polarimetric cloud retrievals (mine)
-Priliminary tests.
+For LES cases
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -425,7 +425,7 @@ if __name__=='__main__':
     if not(mpi):
         data={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x}
         print(abc)
-        cpn.save_obj(data,savename,rp=False)    
+        cpn.save_obj(data,savename,rp=True)    
 
 
 
