@@ -62,7 +62,9 @@ class LES_psudo_rets(object):
             print('Previous results will be loaded!')
             self.loadVW()
         elif self.replace=='0' and not(test):
-            self.replace=1
+            self.replace='1'
+        elif replace is None:
+            self.replace='1'
     def saveVW(self,):
         out_name=self.fpath+self.fname+'.hdf5'
         f=h5py.File(out_name,'w')
