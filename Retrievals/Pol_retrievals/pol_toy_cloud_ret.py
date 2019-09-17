@@ -119,13 +119,14 @@ if __name__=='__main__':
     #Input specifications: See run slurm for details
     band='865'
     sza='120'
-    dim='1D'    #RT vector/scalar
-    rTyp='mean' # 'mean'/'full'/'pixel'
+    dim='3D'    #RT vector/scalar
+    rTyp='full' # 'mean'/'full'/'pixel'
     tail=''     #Tail to the output file
     X=40        #Pixel location if rTyp='pixel'
     method='Breon' #Retrieval technique theory
     pBow=True      #Use primary bow
-    case='fractal' #step/fractal
+    case='step' #step/fractal
+    mpi=False
     #--------------------------------------------------------------------------
     #P12 LUT generation    
     P12Lib=Pol_ret_P12Lib(fname='Pol_ret_PM_library_0p860_2p13_V3.hdf5')
@@ -148,7 +149,7 @@ if __name__=='__main__':
         RT=dsp
     
     if rTyp=='mean':
-        Q_in2= RT.MeanPRad[:,30:50,1].mean(axis=1)#Averaging whole domain
+        Q_in2= RT.MeanPRad[:,:,1].mean(axis=1)#Averaging whole domain
     elif rTyp=='pixel':
         Q_in2= RT.MeanPRad[:,X,1]
         tail="X%d"%(X)+tail
@@ -174,25 +175,42 @@ if __name__=='__main__':
 
     if P.method=='Breon':
         from cpnRetrievalslib import fitBreon as do_fitting
-    y=(-Q_in2*gemet)[P.Q_a1:P.Q_a2]
-    os.system("rm Rsqs.dat")
-    os.system("rm Rsqs_max.dat")
-    os.system("echo \"Rsqs\t Re\t Ve\" > Rsqs.dat")
-    os.system("echo \"Rsqs_max\t Re\t Ve\" > Rsqs_max.dat")
-    ret_Re,ret_Ve,abc,Qls,Rsq=do_fitting(x,y,P,ygabc)
-    os.system("mv Rsqs.dat Rsqs_"+savename+".dat")
-    os.system("mv Rsqs_max.dat Rsqs_max_"+savename+".dat")
-    P.set_reve(ret_Re,ret_Ve)
-    yAll=y
-    fig2,ax2=plt.subplots()
-    ax2.plot(x,y,'k.-')
-    ax2.plot(x,P.imitateF(x,*abc))
-    fig2.show()
+    if Q_in2.ndim==1:
+        y=(-Q_in2*gemet)[P.Q_a1:P.Q_a2]
+        os.system("rm Rsqs.dat")
+        os.system("rm Rsqs_max.dat")
+        os.system("echo \"Rsqs\t Re\t Ve\" > Rsqs.dat")
+        os.system("echo \"Rsqs_max\t Re\t Ve\" > Rsqs_max.dat")
+        ret_Re,ret_Ve,abc,Qls,Rsq=do_fitting(x,y,P,ygabc)
+        os.system("mv Rsqs.dat Rsqs_"+savename+".dat")
+        os.system("mv Rsqs_max.dat Rsqs_max_"+savename+".dat")
+        P.set_reve(ret_Re,ret_Ve)
+        yAll=y
+        fig2,ax2=plt.subplots()
+        ax2.plot(x,y,'k.-')
+        ax2.plot(x,P.imitateF(x,*abc))
+        fig2.show()
+    elif Q_in2.ndim==2:
+        y=np.einsum('ij,i->ij',-Q_in2,4*gemet) 
+        ret_Re=np.zeros((Q_in2.shape[1]),dtype=float)
+        ret_Ve=np.zeros((Q_in2.shape[1]),dtype=float)
+        Qls   =np.zeros((Q_in2.shape[1]),dtype=float)
+        Rsq   =np.zeros((Q_in2.shape[1]),dtype=float)
+        abc   =np.zeros((Q_in2.shape[1],3),dtype=float)
+        yAll  =np.zeros((Q_in2.shape[1],x.size))
+        c=0
+        for i in np.arange(Q_in2.shape[1]):
+            ret_Re[i],ret_Ve[i],abc[i,:],Qls[i],Rsq[i]=do_fitting(x,np.squeeze(y[P.Q_a1:P.Q_a2,i]),P,ygabc)
+            yAll[i,:]=y[P.Q_a1:P.Q_a2,i]
+            c+=1
+            pc=c/Q_in2.shape[1]*100.0
+            tm=time.time()/60/60-start/60/60
+            print("\r%0.2f%% %0.2f hours remaining ..."%(pc,tm/pc*100-tm),end=" ")#
     end=time.time()
     print('%0.2f mins elapsed'%(end/60-start/60))
 
 
-#    if not(mpi):
-#        data={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x}
-#        print(abc)
-#        cpn.save_obj(data,savename,rp=True)    
+    if not(mpi):
+        data={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x}
+        print(abc)
+        cpn.save_obj(data,savename,rp=False)    
