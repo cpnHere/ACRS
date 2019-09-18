@@ -38,6 +38,7 @@ ret_Re=np.zeros((nxy,nxy),dtype=float)
 ret_Ve=np.zeros((nxy,nxy),dtype=float)
 Qls   =np.zeros((nxy,nxy),dtype=float)
 Rsq   =np.zeros((nxy,nxy),dtype=float)
+flags =np.zeros((nxy,nxy),dtype=int)
 abc   =np.zeros((nxy,nxy,3),dtype=float)
 yAll  =np.zeros((nxy,nxy,x.size),dtype=float)
 jobs=int(rank)*Nperjob+np.arange(0,Nperjob,1)
@@ -48,10 +49,10 @@ if P.method=='Breon':
 for n in jobs:
     i=int(n/nxy)
     j=n%nxy
-    ret_Re[i,j],ret_Ve[i,j],abc[i,j,:],Qls[i,j],Rsq[i,j]=do_fitting(x,np.squeeze(y[P.Q_a1:P.Q_a2,i,j]),P,ygabc)
+    ret_Re[i,j],ret_Ve[i,j],abc[i,j,:],Qls[i,j],Rsq[i,j],flags[i,j]=do_fitting(x,np.squeeze(y[P.Q_a1:P.Q_a2,i,j]),P,ygabc)
     yAll[i,j,:]=y[P.Q_a1:P.Q_a2,i,j]
 if rank>0:
-    out={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll}
+    out={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'flags':flags}
     comm.send(out, dest=0)
     
 if rank==0:
@@ -63,7 +64,8 @@ if rank==0:
         Qls   =Qls+out['Qls']
         Rsq   =Rsq+out['Rsq']
         yAll  =yAll+out['yAll']
-    saveO={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x}
+        flags =flags+out['flags'] 
+    saveO={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x,'flags':flags}
     save_obj(saveO,data['savename']+'_MPI',rp=True)
     os.system('rm '+'mpi_data_'+data['savename']+'.pkl')
     end=time.time()
