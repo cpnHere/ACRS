@@ -955,15 +955,26 @@ def fitBreon(x,y,P,ygabc=None):
     return fit(x,y,P,F,ygabc)    
 
 def fitBreon_noRsq(x,y,P,ygabc=None):
+    '''
+    Flags:
+        0: Successful retrievals
+        1: Optimal parameters not found (curve_fit). maxfev=800 reached"
+            o Check how many these flags were given in each case. Seems not a consistent issue.
+    '''
     def F(Theta,a,b,c):
         return a*P.getP(Theta)+b*np.deg2rad(Theta)+c
     def fit(x,y,P,F,ygabc):
         R_sq=0.0
+        flag=0
         abc=np.array([1,1,1])*np.nan;Re,Ve=np.nan,np.nan #For failed retrievals
         for i in P.Re:
             for j in P.Ve:
                 P.set_reve(i,j)
-                popt, pcov = curve_fit(F, x, y,p0=ygabc)
+                try:
+                    popt, pcov = curve_fit(F, x, y,p0=ygabc)
+                except RuntimeError:
+                    print("Optimal parameters not found: Number of calls to function has reached maxfev = 800")
+                    flag=1
                 #Finding R^2 value
                 residuals = y- F(x, *popt)
                 ss_res = np.sum(residuals**2)
@@ -983,7 +994,7 @@ def fitBreon_noRsq(x,y,P,ygabc=None):
 #                    fl.close()
         Qsqr=abc[0]**2*(np.mean(P.getP(x)**2)-np.mean(P.getP(x))**2)/np.mean((y-F(x,*abc))**2)
         
-        return Re,Ve,abc,Qsqr,R_sq
+        return Re,Ve,abc,Qsqr,R_sq,flag
     return fit(x,y,P,F,ygabc)    
 def fitBreonMod(x,y,P,ygabc=None):
     '''
