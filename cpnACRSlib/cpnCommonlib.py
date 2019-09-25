@@ -323,3 +323,23 @@ def multiple_ticks(ax_XY,major_step,minor_step=None,major_format='%0.1f'):
     else:
         ax_XY.set_minor_locator(AutoMinorLocator())
 
+def write_latex_table(X,table_name,colnames=None,rownames=None,stl='%0.2f'):
+    '''
+    To write arrays as latex tables
+    '''
+    if colnames is None:
+        colnames=['col%d'%(i) for i in range(X.shape[1])]
+    if rownames is None:
+        rownames=['row%d'%(i) for i in range(X.shape[0])]
+    cols=colnames[:-1]
+    f1=open(table_name,'w')
+    f1.write('  &')
+    [f1.write(i+' & ') for i in cols]
+    f1.write(colnames[-1]+' \\\\'+'\n\hline\n')
+    for i in range(np.size(rownames)):
+        f1.write(rownames[i])
+        for j in range(np.size(colnames)):
+            f1.write('&'+stl%(X[i,j-1]))
+        f1.write(' \\\\'+'\n')
+    f1.write('\hline\n')
+    f1.close()
