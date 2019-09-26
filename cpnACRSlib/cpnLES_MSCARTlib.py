@@ -47,7 +47,7 @@ import numpy as np
 import netCDF4
 import h5py, os, sys
 #from pyhdf.SD import SD
-import time
+import time, copy
 import matplotlib.pyplot as plt
 from textwrap import wrap
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
@@ -1150,8 +1150,11 @@ class DHARMA_onmp(object):
         from vertical_weighting_psudo_ret import LES_psudo_rets
         VW=LES_psudo_rets(self,mie_name,mie_path,dgSZA,dgVZA,a,b,band=band,replace=replace)
         if VW.replace=='1':
-            VW.Re,VW.Ve,VW.dN,VW.re_tau,VW.ve_tau,VW.w_tau,VW.tau=self.find_reVW(mie_name,lesCname,dgSZA,dgVZA,a=a,b=b,mie_path=mie_path,band=band)        
+            VW.Re,VW.Ve,VW.dN,VW.re_tau,VW.ve_tau,VW.w_tau,VW.tau=self.find_reVW(mie_name,lesCname,dgSZA,dgVZA,a=a,b=b,mie_path=mie_path,band=band)  
+            VW.Tau=VW.tau[0,:,:]
             VW.saveVW()
+        else:
+            VW.loadVW()
         self.VW=VW
     def findLWP(self,obj=None):
         '''
