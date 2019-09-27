@@ -760,7 +760,7 @@ class LES_case(object):
         '''
         self.bias3D1D =self.RT.MeanPRad[VZAi,:]-self.RT1D.MeanPRad[VZAi,:]
         self.impFac3D =self.bias3D1D/self.RT1D.MeanPRad[VZAi,:]
-    def get_bin_defs(self,vci):
+    def get_bin_defs(vci):
         '''
         To get pre-defined bin arrays for MSCART LES reflectance simulations
         vci: Give index (ix) as the following table
