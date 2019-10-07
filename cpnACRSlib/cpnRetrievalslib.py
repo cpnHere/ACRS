@@ -784,7 +784,7 @@ class Pmat(object):
         Breon   :Breon et. al. 2005 
         BreonMod:Breon et. al. 2005 albeit F=aP+b*cos()**2+c
     '''
-    def __init__(self,Re,Ve,MieA,MieP12,ObsA,method='Breon',primaryBow=False):
+    def __init__(self,Re,Ve,MieA,MieP12,ObsA,method='Breon',primaryBow=False,Qa1Qa2=None):
         print('Pol. ret. method: '+method+' primaryBow: '+str(primaryBow))
         self.method=method
         if primaryBow:
@@ -798,7 +798,10 @@ class Pmat(object):
         #Selecting matching observation scattering angles to the library
         p12_a1=int(np.argwhere(MieA==slt))
         p12_a2=int(np.argwhere(MieA==srt))
-        Q_a1,Q_a2=self.findQa1a2_2(ObsA,slt,srt)
+        if Qa1Qa2 is None:
+            Q_a1,Q_a2=self.findQa1a2_2(ObsA,slt,srt)
+        else:
+            Q_a1,Q_a2=Qa1Qa2[0],Qa1Qa2[1]
         if Q_a1>Q_a2:
             Q_a1,Q_a2=Q_a2,Q_a1
         theQ=ObsA[Q_a1:Q_a2]
@@ -821,10 +824,10 @@ class Pmat(object):
         q_a1=np.argwhere(abs(ObsA-slt)<0.01)
         q_a2=np.argwhere(abs(ObsA-srt)<0.01)
         if q_a1.size==1 and q_a2.size==1:
-            #only 1 occurrence of each angle.
+            print('only 1 occurrence of each angle.')
             Q_a1,Q_a2=self.findQa1a2_1(ObsA,slt,srt)
         elif q_a1.size==1 or q_a2.size==1:
-            #either one angle has only one occurrence
+            print('either one angle has only one occurrence')
             argsDiff=abs(q_a1-q_a2)
             if argsDiff.size==q_a1.size:
                 Q_a1=q_a1[np.where(argsDiff==(srt-slt))]
@@ -833,7 +836,7 @@ class Pmat(object):
                 Q_a2=q_a2[np.where(argsDiff==(srt-slt))]
                 Q_a1=q_a1
         elif q_a1.size==q_a2.size:
-            #both angles has same number of occurrences
+            print('both angles has same number of occurrences')
             argsDiff=abs(q_a1-q_a2)
             Q_a1=q_a1[np.where(argsDiff==(srt-slt))]
             Q_a2=q_a2[np.where(argsDiff==(srt-slt))]
