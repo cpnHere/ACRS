@@ -169,12 +169,11 @@ def add_cb(fig,ctf,ax,ticks=None,orientation='horizontal',label='label',pad=0.2)
     else:
         fig.colorbar(ctf, cax=cax,orientation=orientation,label=label)
     
-def savefig(fig,fig_ttl,path=None):
+def savefig(fig,fig_ttl,path=None,rp=False):
     '''
     fig: Figure object matplotlib.figure.Figure
     fig_ttl: figure title string (some specila characterls will be removed from the file name)
     '''
-    rp=False
     for ch in [' ','[',']']:
         if ch in fig_ttl:
             fig_ttl=fig_ttl.replace(ch,'_')
@@ -183,12 +182,13 @@ def savefig(fig,fig_ttl,path=None):
         filename=fig_ttl
     else:
         filename=path+fig_ttl
-    if os.path.isfile(filename+'.png'):
-        usr=input('Replace existing file?: ')
-        if usr=='y':
+    if not(rp):
+        if os.path.isfile(filename+'.png'):
+            usr=input('Replace existing file?: ')
+            if usr=='y':
+                rp=True
+        else:
             rp=True
-    else:
-        rp=True
     if rp:
         fig.savefig(filename+'.png', format='png', dpi=200)
         print(filename+'.png SAVED.')
@@ -331,14 +331,15 @@ def write_latex_table(X,table_name,colnames=None,rownames=None,stl='%0.2f'):
         colnames=['col%d'%(i) for i in range(X.shape[1])]
     if rownames is None:
         rownames=['row%d'%(i) for i in range(X.shape[0])]
+    colnames=[r.replace('_','\_') for r in colnames]
+    rownames=[r.replace('_','\_') for r in rownames]
     cols=colnames[:-1]
     f1=open(table_name,'w')
-    f1.write('  &')
     [f1.write(i+' & ') for i in cols]
     f1.write(colnames[-1]+' \\\\'+'\n\hline\n')
     for i in range(np.size(rownames)):
         f1.write(rownames[i])
-        for j in range(np.size(colnames)):
+        for j in range(np.size(colnames[1:])):
             f1.write('&'+stl%(X[i,j-1]))
         f1.write(' \\\\'+'\n')
     f1.write('\hline\n')
