@@ -47,11 +47,14 @@ def check_fit2(y,x,abc,ret_Re,ret_Ve,Rsq,P12Lib,LEScase,method,primaryBow=False)
     LEScase: cpnLES_MSCARTlib.LEScase
     P12Lib: cpnRetrievalslib.P12Lib
     '''
+    muV=np.cos(np.deg2rad(LEScase.RT.VZA))
+    muS=np.cos(np.deg2rad(180-LEScase.RT.SZA))
+    gemet=4*(muS+muV)
     P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],LEScase.RT.ScatA,method=method,primaryBow=primaryBow)
     P.set_reve(ret_Re,ret_Ve)
     fig6,ax6=plt.subplots(figsize=(8,4))
-    ax6.plot(x,P.imitateF(x,*abc),'g.--',label='fit')
-    ax6.plot(x,y,'k.-')
+    ax6.plot(x,P.imitateF(x,*abc)/gemet[P.Q_a1:P.Q_a2],'g.--',label='fit')
+    ax6.plot(x,y/gemet[P.Q_a1:P.Q_a2],'k.-')
 #    ax6.plot(RT.ScatA[P.Q_a1:P.Q_a2],-P.getP(RT.ScatA[P.Q_a1:P.Q_a2]),'r--')
     ax6.text(0.5,0.6,r'$r_e$ %0.2f, $v_e$ %0.2f, $R^2$ %0.2f'%(ret_Re,ret_Ve,Rsq),transform=ax6.transAxes,size=14)
     ax6.set_xlabel('Scattering Angle')
