@@ -3,7 +3,7 @@
 #SBATCH --job-name=ATcol0p860_160
 #SBATCH --output=slurm%J-AT0p860_160_1e5.out
 #SBATCH --partition=batch
-#SBATCH --qos=short+
+#SBATCH --qos=medium+
 #SBATCH --mem=5000
 #SBATCH --array=0-5184%250
 ##SBATCH --nodelist=cnode[002-029,031-044]
