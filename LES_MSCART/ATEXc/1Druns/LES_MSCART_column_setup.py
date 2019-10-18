@@ -38,7 +38,7 @@ min_PRad_the = 0.0 # Minimum viewing polar angle
 max_PRad_the = 60.0 # Max viewing polar angle
 min_PRad_phi = vphi # Minimum viewing azimuth angle
 max_PRad_phi = vphi+180.0 # Max viewing azimuth angle
-vec_PRad_zlv1 = 1.500000 # position of the detector
+vec_PRad_zlv1 = 3.000000 # position of the detector
 NmaxScat=10000
 
 fr=open(dummy,'r')
