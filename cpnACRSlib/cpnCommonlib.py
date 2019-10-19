@@ -105,7 +105,7 @@ def idx_closest(arr,val):
     Returns the clossest index of arr to value val.
     '''
     return abs(arr-val).argmin()
-def write_latex_table(X,table_name,colnames=None,rownames=None,stl='%0.2f'):
+def write_latex_table(X,table_name,colnames=None,rownames=None,stl='%0.2f',row_separation=4):
     '''
     To write arrays as latex tables
     colnames should have ALL column names, including the LABEL for ROWs.
@@ -120,11 +120,15 @@ def write_latex_table(X,table_name,colnames=None,rownames=None,stl='%0.2f'):
     f1=open(table_name,'w')
     [f1.write(i+' & ') for i in cols]
     f1.write(colnames[-1]+' \\\\'+'\n\hline\n')
+    row_count=0
     for i in range(np.size(rownames)):
         f1.write(rownames[i])
+        row_count+=1
         for j in range(np.size(colnames[1:])):
-            f1.write('&'+stl%(X[i,j-1]))
+            f1.write('&'+stl%(X[i,j]))
         f1.write(' \\\\'+'\n')
+        if row_count%row_separation==0:
+            f1.write('\hline\n')
     f1.write('\hline\n')
     f1.close()
 '''
