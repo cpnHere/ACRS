@@ -708,13 +708,57 @@ class LES_case(object):
     '''
     3D LES RT simulations with the input MSCART field
     --------------------------------------------------
-    MSCARThdf: *.hdf5 name (with extension)
-    base_dir: Directory of the 3D runs
-    result_dir(None): Give 3D result dir from the base_dir o/w tries to create one based on conventions.
-    w1D(False): True if want to read corresponding 1D simulations
-    band(None): '0p860' string o/w tries to create one based on conventions.
+    - Old __init__ function was changed. If you are getting errors when using with many input parameters, that 
+    could be the reason. Old function is self.read_rt_and_field_old() now.
+    - New __init__ only takes one input parameter which defines the complete case.
+    name: filename including the path -or- case name
+        case name ex. DYCOMS2_120_b0p860, filenameExp=False
+        filename +path ex. name=['path_and_filename_3d','path_and_filename_1d'], filenameExp=True
     '''
-    def __init__(self,MSCARThdf,base_dir,result_dir=None,RT1Dname=None,band=None):
+    def __init__(self,name,filenameExp=False):
+        self.rotate1D='not_done'
+        
+        if filenameExp:
+            fname_3d=name[0]
+            fname_1D=name[1]
+        else:
+            fname_3d=self.get_file_name(name+'_3D')
+            fname_1D=self.get_file_name(name+'_1D')
+        self.band=fname_3d.split('results/',1)[1].split('/',1)[0]
+        #3D RT
+        result_dir3d='results/'+self.band+'/'
+        base_dir3d=fname_3d.split('results',1)[0]
+        self.RT=POLCARTdset('LES',base_dir3d)
+        MSCARThdf=fname_3d.split(self.band+'/',1)[1]
+        self.RT.readPOLCARThdf5(MSCARThdf,dpath=base_dir3d+result_dir3d)
+        self.RT_field=LES_field(MSCARThdf.split('_MSCART',1)[0]+'.nc',dpath=base_dir3d)
+        self.RT_field.readLES_field()
+        #1D RT
+        
+        base_dir1d=fname_1D.split('1Druns',1)[0]
+        self.RT1D=POLCARTdset('LES1D',base_dir1d+'1Druns/LES'+self.band+'_bins/')
+        MSCARThdf1D=fname_1D.split('LES'+self.band+'_bins/',1)[1]
+        self.RT1D.readPOLCARThdf5(MSCARThdf1D,base_dir1d+'1Druns/results/LES'+self.band+'_bins/')
+        self.rotate_1D_domain()
+        self.xcens=(self.RT_field.xgrd[1:]+self.RT_field.xgrd[0:-1])/2
+        self.ycens=(self.RT_field.ygrd[1:]+self.RT_field.ygrd[0:-1])/2  
+        if type(self.RT.fname) is np.ndarray:
+            self.RT.fname=self.RT.fname[0].astype(str)
+        if type(self.RT1D.fname) is np.ndarray:
+            self.RT1D.fname=self.RT1D.fname[0].astype(str)
+        self.RT.remove_redundant_nadir()
+        self.RT1D.remove_redundant_nadir()
+    def read_rt_and_field_old(self,MSCARThdf,base_dir,result_dir=None,RT1Dname=None,band=None):
+        '''
+        Old __init__() function of this class. Atleast hdf file name and based_dir should be given.
+        -----------------------------------------------------
+        MSCARThdf: *.hdf5 name (with extension)
+        base_dir: Directory of the 3D runs
+        result_dir(None): Give 3D result dir from the base_dir o/w tries to create one based on conventions.
+        w1D(False): True if want to read corresponding 1D simulations
+        band(None): '0p860' string o/w tries to create one based on conventions.
+
+        '''
         self.rotate1D='not_done'
         if band==None:
             self.band=MSCARThdf.split('_b',1)[1].split('_',1)[0]
@@ -741,6 +785,65 @@ class LES_case(object):
             self.RT1D.fname=self.RT1D.fname[0].astype(str)
         self.RT.remove_redundant_nadir()
         self.RT1D.remove_redundant_nadir()
+    def get_file_name(self,case):
+        '''
+        Return the appropriate file name
+        When a new run was done, change the filename here. Hopefully, the others will manage it.
+        '''
+        filename={}
+        filename['DYCOMS2_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/results/b0p860/DYCOMS2_dharma_008036_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH2e6.hdf5'
+        filename['DYCOMS2_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/results/b0p860/DYCOMS2_dharma_008036_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH2e6.hdf5'
+        filename['DYCOMS2_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/results/b0p860/DYCOMS2_dharma_008036_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH2e6.hdf5'
+        filename['DYCOMS2_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/results/b2p13/DYCOMS2_dharma_008036_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH2e6.hdf5'
+        filename['DYCOMS2_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/results/b2p13/DYCOMS2_dharma_008036_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH2e6.hdf5'
+        filename['DYCOMS2_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/results/b2p13/DYCOMS2_dharma_008036_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH2e6.hdf5'
+        filename['DYCOMS2_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/1Druns/results/LESb0p860_bins/DYCOMS2_dharma_008036_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['DYCOMS2_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/1Druns/results/LESb0p860_bins/DYCOMS2_dharma_008036_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['DYCOMS2_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/1Druns/results/LESb0p860_bins/DYCOMS2_dharma_008036_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['DYCOMS2_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/1Druns/results/LESb2p13_bins/DYCOMS2_dharma_008036_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['DYCOMS2_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/1Druns/results/LESb2p13_bins/DYCOMS2_dharma_008036_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['DYCOMS2_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/1Druns/results/LESb2p13_bins/DYCOMS2_dharma_008036_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+    
+        filename['RICO_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b0p860/RICO_dharma_005044_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b0p860/RICO_dharma_005044_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b0p860/RICO_dharma_005044_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb0p860_bins/RICO_dharma_005044_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['RICO_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb0p860_bins/RICO_dharma_005044_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['RICO_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb0p860_bins/RICO_dharma_005044_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['RICO_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb2p13_bins/RICO_dharma_005044_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['RICO_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb2p13_bins/RICO_dharma_005044_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['RICO_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb2p13_bins/RICO_dharma_005044_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+    
+        filename['ATEXc_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b2p13/ATEXc_dharma_007877_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b2p13/ATEXc_dharma_007877_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b2p13/ATEXc_dharma_007877_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+    
+        filename['ATEXp_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        
+        return filename[case]
     def rotate_1D_domain(self,):
         '''
         Transpose MeanPRad and RMSEPRad arrays of the 1D results to be matched with 3D
