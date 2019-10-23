@@ -77,8 +77,6 @@ def save_obj(obj, name, rp=False):
         usr=input('Replace existing file?: ')
         if usr=='y':
             rp=True
-    else:
-        rp=True
     if rp:
         classes=pkl_classes()
         classes.class_names=type(obj)
