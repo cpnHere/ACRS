@@ -53,6 +53,27 @@ from textwrap import wrap
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from cpnCommonlib import movingaverage2D
 from cpnMielib import MieSet
+
+def add_cloud_mask(dictionary,cldM):
+    '''
+    A genralized function to add a cloud mask.
+    dictionary: The set of variables
+    Find all the ndarrays and mask,
+        (1) n=2 arrays [cldM]=np.nan
+        (2) last two dimensions of n=3 arrays [:,cldM]=np.nan 
+    '''
+    arrs={2:[],3:[]}
+    for key in vars(dictionary).keys():
+        if type(vars(dictionary)[key]) is np.ndarray:
+            if vars(dictionary)[key].ndim==2:
+                arrs[2]=np.append(arrs[2],key)
+            if vars(dictionary)[key].ndim==3:
+                arrs[3]=np.append(arrs[3],key)
+    for key in arrs[2]:
+        vars(dictionary)[key][np.invert(cldM)]=np.nan
+    for key in arrs[3]:
+        vars(dictionary)[key][:,np.invert(cldM)]=np.nan
+        
 class POLCARTdset(object):
     def __init__(self,dset,nmldpath):
         self.nmldpath=nmldpath
@@ -717,6 +738,7 @@ class LES_case(object):
     '''
     def __init__(self,name,filenameExp=False):
         self.rotate1D='not_done'
+        self.cloud_mask='not_done'
         
         if filenameExp:
             fname_3d=name[0]
@@ -926,6 +948,19 @@ class LES_case(object):
                'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)}    
             }        
         return VC[vci]
+    def add_cloud_mask(self,cldM):
+        '''
+        Mask 'cloud free' pixels
+        cldM: 2D array. 'True' are cloudy pixels
+        '''
+        if self.cloud_mask=='not_done':
+            self.RT.MeanPRad[:,np.invert(cldM),:]=np.nan
+            self.RT.RMSEPRad[:,np.invert(cldM),:]=np.nan
+            self.RT1D.MeanPRad[:,np.invert(cldM),:]=np.nan
+            self.RT1D.RMSEPRad[:,np.invert(cldM),:]=np.nan
+            self.cloud_mask='done'
+        else:
+            print('Already applied a cloud mask!')
 
 class DHARMA(object):
     '''
@@ -980,6 +1015,7 @@ class DHARMA_onmp(object):
     Optical and microphysical properties of the DHARMA output
     '''
     def __init__(self,fname,fpath=None):
+        self.cloud_mask='not_done'
         self.fname=fname
         self.DHARMA=DHARMA(self.fname,fpath)
         
@@ -1316,6 +1352,23 @@ class DHARMA_onmp(object):
         r=obj.r_drops
         Bext=np.einsum('i,ijkl->jkl',r**2,nr)*np.pi*Qe*1e-6#m^-1
         return Bext
+    def add_cloud_mask(self,cldM):
+        '''
+        Mask 'cloud free' pixels
+        cldM: 2D array. 'True' are cloudy pixels
+		lwc,lwp,Bext,tauQ,dTau,Tau will be masked.
+        '''
+        if self.cloud_mask=='not_done':
+            self.lwc[:,np.invert(cldM)]=np.nan
+            self.lwp[np.invert(cldM)]=np.nan
+            self.BextQe2p09[:,np.invert(cldM)]=np.nan
+            self.tauQe2p09[np.invert(cldM)]=np.nan
+            self.dTau[:,:,np.invert(cldM)]=np.nan
+            self.Tau[:,np.invert(cldM)]=np.nan
+            self.cloud_mask='done'
+        else:
+            print('Already applied a cloud mask!')
+    
 
 def iqu(fig,ax,ds,iqu,v_the,ttl=None,xy_extent=None):
 #    xy_extent:[0,6.4,0,6.4] actual xy dimensions
