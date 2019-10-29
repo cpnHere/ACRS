@@ -54,6 +54,11 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
         ---------------------------------------
         0p860  |  120  |  000  |   7  |  000  |
         2p13   |  120  |  000  |   8  |  000  |
+        +++++++++++++++++++++++++++++++++++++++
+        RICO
+        +++++++++++++++++++++++++++++++++++++++
+        ---------------------------------------
+        0p860  |  140  |  000  |   9  |  000  |
     RTdim: '1D' or '3D' RT transfer string
     '''
     VC={1:{'vIR':np.linspace(0   ,1,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.1,50) ,\
@@ -87,7 +92,11 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
         8:{'vIR':np.linspace(0.0 ,0.4,50) ,'vQR':np.linspace(-.01,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
            'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
            'cIR':np.arange(0.0,0.41,0.1)  ,'cQR':np.arange(-.01,.001,0.005),'cUR':np.arange(0.0,0.021,0.010),\
-           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)}    
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
+        9:{'vIR':np.linspace(0.0 ,1.0,50) ,'vQR':np.linspace(-.1,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
+           'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,1.1,0.5)  ,'cQR':np.arange(-.1,0.01,0.05),'cUR':np.arange(-0.01,0.011,0.010),\
+           'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,2.5)}
         }        
     if VZA==0:
         VZAi=61
