@@ -54,26 +54,44 @@ from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from cpnCommonlib import movingaverage2D
 from cpnMielib import MieSet
 
-def add_cloud_mask(dictionary,cldM):
+def add_cloud_mask(dict_atr,cldM,dictionary=False):
     '''
     A genralized function to add a cloud mask.
-    dictionary: The set of variables
+    Be careful about the content. All the attributes that satisfy certain condtions 
+    will be rotated. So make sure there are no any array that SHOULD NOT BE ROTATED!!
+    -----------------------------------------------------------------------------------
+    dict_atr + dictionary=False: dict_atr must be an object. Will search over all attributes.
+    dict_atr + dictionary=True : dict_atr must be a dictionary
     Find all the ndarrays and mask,
         (1) n=2 arrays [cldM]=np.nan
         (2) last two dimensions of n=3 arrays [:,cldM]=np.nan 
     '''
-    arrs={2:[],3:[]}
-    for key in vars(dictionary).keys():
-        if type(vars(dictionary)[key]) is np.ndarray:
-            if vars(dictionary)[key].ndim==2:
-                arrs[2]=np.append(arrs[2],key)
-            if vars(dictionary)[key].ndim==3:
-                arrs[3]=np.append(arrs[3],key)
-    for key in arrs[2]:
-        vars(dictionary)[key][np.invert(cldM)]=np.nan
-    for key in arrs[3]:
-        vars(dictionary)[key][:,np.invert(cldM)]=np.nan
-        
+    print('Applying cloud mask...')
+    arrs={'two':[],'lastPair':[],'firstPair':[]}
+    if dictionary:
+        variables=dict_atr
+    else:
+        variables=vars(dict_atr)
+    for key in variables.keys():
+        if type(variables[key]) is np.ndarray:
+            if variables[key].ndim==2:
+                arrs['two']      =np.append(arrs['two'],key)
+            if variables[key].ndim==3 and variables[key].shape[0]==variables[key].shape[1]:
+                arrs['firstPair'] =np.append(arrs['firstPair'],key)
+            if variables[key].ndim==3 and variables[key].shape[1]==variables[key].shape[2]:
+                arrs['lastPair']=np.append(arrs['lastPair'],key)
+    print('Masking two dimensions:')
+    for key in arrs['two']:
+        print('\t'+key)
+        variables[key][np.invert(cldM)]=np.nan
+    print('Masking last two dimensions:')
+    for key in arrs['lastPair']:
+        print('\t'+key)
+        variables[key][:,np.invert(cldM)]=np.nan
+    print('Masking first two dimensions:')
+    for key in arrs['firstPair']:
+        print('\t'+key)
+        variables[key][np.invert(cldM),:]=np.nan
 class POLCARTdset(object):
     def __init__(self,dset,nmldpath):
         self.nmldpath=nmldpath
