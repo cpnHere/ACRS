@@ -17,8 +17,8 @@ import numpy as np
 import cpnLES_MSCARTlib as lib
 
 
-band='0p860'
-d3D=lib.LES_field('ATEXc_dharma_007877_b0p860.nc',dpath='../')
+band='2p13'
+d3D=lib.LES_field('ATEXc_dharma_007877_b2p13.nc',dpath='../')
 d3D.readLES_field()
 #i1D=lib.LES_field('OP_A5.nc')
 #i1D.readLES_field()
