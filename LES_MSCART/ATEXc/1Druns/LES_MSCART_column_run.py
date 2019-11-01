@@ -29,7 +29,7 @@ job=int(sys.argv[5])
 MSCART=str(sys.argv[6])
 NPH=str(sys.argv[7])
 n_grid=int(sys.argv[8])
-over_write=False
+over_write=True
 
 print('Assume n_xgrd=n_ygrd=%d'%n_grid)
 i=str(int(job/n_grid))
