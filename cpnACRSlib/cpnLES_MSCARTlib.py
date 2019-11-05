@@ -847,9 +847,12 @@ class LES_case(object):
         filename['RICO_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b0p860/RICO_dharma_005044_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['RICO_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b0p860/RICO_dharma_005044_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['RICO_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b0p860/RICO_dharma_005044_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
-        filename['RICO_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
-        filename['RICO_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
-        filename['RICO_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        #filename['RICO_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH2e6.hdf5'
+        #filename['RICO_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH2e6.hdf5'
+        #filename['RICO_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['RICO_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/results/b2p13/RICO_dharma_005044_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH2e6.hdf5'
         filename['RICO_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb0p860_bins/RICO_dharma_005044_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['RICO_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb0p860_bins/RICO_dharma_005044_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['RICO_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb0p860_bins/RICO_dharma_005044_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
@@ -1297,7 +1300,7 @@ class DHARMA_onmp(object):
                 w_tau[:,i,j]=w_tauDIVc[:,i,j]*c[i,j]
         #calculating vertically weighted number concentration
         dN_vw=np.trapz(self.DHARMA.dN_drops.sum(axis=0)*w_tau,tau,axis=0)
-        #calculating vertically weighted cloud optical thickness
+        #calculating vertically weighted cloud optical thickness ?? (:D LOL)
         end=time.time()
         print('%0.2f mins elapsed!'%((end-start)/60))
         return Re_vw,Ve_vw,dN_vw,re_tau,ve_tau,w_tau,tau
