@@ -73,6 +73,8 @@ def save_obj(obj, name, rp=False):
     File names will be OVERWRITTEN!!
     rp=True to force replace existing file
     '''
+    if not(os.path.isfile(name+'.pkl')):
+        rp=True
     if not(rp) and os.path.isfile(name+'.pkl'):
         usr=input('Replace existing file?: ')
         if usr=='y':
