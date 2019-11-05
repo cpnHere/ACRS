@@ -137,28 +137,36 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
     return fig1,fig1_ttl,vc
     
 def iqu_LEScase_3D(fig1,case,ax1,VZAi,vc,case_name="DYCOMS2"):
+    cmap=plt.cm.jet
+    cmap.set_bad(color='gray')
     fig1_ttl=case.RT.fname.split('.',1)[0]+'_'+case_name+'_IQU_top_RMSE_bot'    
-    ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=plt.cm.jet,extend='both')
-    ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=plt.cm.jet,extend='both')
-    ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=plt.cm.jet,extend='both')
-    cteI=ax1[1,0].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,0]/case.RT.MeanPRad[VZAi,:,:,0]*100,vc['vIe'],cmap=plt.cm.jet,extend='both')
-    cteQ=ax1[1,1].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,1]/case.RT.MeanPRad[VZAi,:,:,1]*100,vc['vQe'],cmap=plt.cm.jet,extend='both')
-    cteU=ax1[1,2].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,2]/case.RT.MeanPRad[VZAi,:,:,2]*100,vc['vUe'],cmap=plt.cm.jet,extend='both')
+    ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
+    ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
+    ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
+    cteI=ax1[1,0].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,0]/case.RT.MeanPRad[VZAi,:,:,0]*100,vc['vIe'],cmap=cmap,extend='both')
+    cteQ=ax1[1,1].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,1]/case.RT.MeanPRad[VZAi,:,:,1]*100,vc['vQe'],cmap=cmap,extend='both')
+    cteU=ax1[1,2].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,2]/case.RT.MeanPRad[VZAi,:,:,2]*100,vc['vUe'],cmap=cmap,extend='both')
     return ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl
 def iqu_LEScase_1D(fig1,case,ax1,VZAi,vc,case_name="DYCOMS2"):    
+    cmap=plt.cm.jet
+    cmap.set_bad(color='gray')
     fig1_ttl=case.RT1D.fname.split('.',1)[0]+'_'+case_name+'_IQU_top_RMSE_bot'
-    ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=plt.cm.jet,extend='both')
-    ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=plt.cm.jet,extend='both')
-    ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=plt.cm.jet,extend='both')
-    cteI=ax1[1,0].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,0]/case.RT1D.MeanPRad[VZAi,:,:,0]*100),vc['vIe'],cmap=plt.cm.jet,extend='both')
-    cteQ=ax1[1,1].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,1]/case.RT1D.MeanPRad[VZAi,:,:,1]*100),vc['vQe'],cmap=plt.cm.jet,extend='both')
-    cteU=ax1[1,2].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,2]/case.RT1D.MeanPRad[VZAi,:,:,2]*100),vc['vUe'],cmap=plt.cm.jet,extend='both')
+    ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
+    ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
+    ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
+    cteI=ax1[1,0].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,0]/case.RT1D.MeanPRad[VZAi,:,:,0]*100),vc['vIe'],cmap=cmap,extend='both')
+    cteQ=ax1[1,1].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,1]/case.RT1D.MeanPRad[VZAi,:,:,1]*100),vc['vQe'],cmap=cmap,extend='both')
+    cteU=ax1[1,2].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,2]/case.RT1D.MeanPRad[VZAi,:,:,2]*100),vc['vUe'],cmap=cmap,extend='both')
     return ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl
 def DYCOMS2_3D_1D_bias(case,VZA,SZA,vci):
     '''
     DYCOMS2 3D and 1D biases plot
     Uses iqu_DYCOMS2()
     '''
+    cmap=plt.cm.jet
+    cmap.set_bad(color='gray')
+    cmap0=plt.cm.RdBu_r
+    cmap0.set_bad(color='gray')
     if VZA==0:
         VZAi=61
     _,_,vc=iqu_DYCOMS2(case,VZA,SZA,vci=vci)
@@ -169,13 +177,13 @@ def DYCOMS2_3D_1D_bias(case,VZA,SZA,vci):
     fig7_ttl=case.RT.fname.split('.',1)[0]+'_DYCOM2_IQU_3D_1D_biases'
     fig7.suptitle("\n".join(wrap(fig7_ttl,50)),size=10)
     
-    ctfI=ax7[0,0].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,0]  ,vc['vIR'],cmap=plt.cm.jet,extend='both');ax7[0,0].set_title('I_3D',size=10)
-    ctfQ=ax7[0,1].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,1]  ,vc['vQR'],cmap=plt.cm.jet,extend='both');ax7[0,1].set_title('Q_3D',size=10)
-    ctI1=ax7[1,0].contourf(case.xcens,case.ycens,(case.RT1D.MeanPRad[VZAi,:,:,0]).T,vc['vIR'],cmap=plt.cm.jet,extend='both');ax7[1,0].set_title('I_1D',size=10)
-    ctQ1=ax7[1,1].contourf(case.xcens,case.ycens,(case.RT1D.MeanPRad[VZAi,:,:,1]).T,vc['vQR'],cmap=plt.cm.jet,extend='both');ax7[1,1].set_title('Q_1D',size=10)
+    ctfI=ax7[0,0].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,0]  ,vc['vIR'],cmap=cmap,extend='both');ax7[0,0].set_title('I_3D',size=10)
+    ctfQ=ax7[0,1].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,1]  ,vc['vQR'],cmap=cmap,extend='both');ax7[0,1].set_title('Q_3D',size=10)
+    ctI1=ax7[1,0].contourf(case.xcens,case.ycens,(case.RT1D.MeanPRad[VZAi,:,:,0]).T,vc['vIR'],cmap=cmap,extend='both');ax7[1,0].set_title('I_1D',size=10)
+    ctQ1=ax7[1,1].contourf(case.xcens,case.ycens,(case.RT1D.MeanPRad[VZAi,:,:,1]).T,vc['vQR'],cmap=cmap,extend='both');ax7[1,1].set_title('Q_1D',size=10)
     
-    ctfb1=ax7[2,0].contourf(case.xcens,case.ycens,RTbias.MeanPRad[VZAi,:,:,0],np.linspace(-.1,.1,50)  ,cmap=plt.cm.RdBu_r,extend='both');ax7[2,0].set_title('I Bias',size=10)
-    ctfb2=ax7[2,1].contourf(case.xcens,case.ycens,RTbias.MeanPRad[VZAi,:,:,1],np.linspace(-.01,.01,50),cmap=plt.cm.RdBu_r,extend='both');ax7[2,1].set_title('Q Bias',size=10)
+    ctfb1=ax7[2,0].contourf(case.xcens,case.ycens,RTbias.MeanPRad[VZAi,:,:,0],np.linspace(-.1,.1,50)  ,cmap=cmap0,extend='both');ax7[2,0].set_title('I Bias',size=10)
+    ctfb2=ax7[2,1].contourf(case.xcens,case.ycens,RTbias.MeanPRad[VZAi,:,:,1],np.linspace(-.01,.01,50),cmap=cmap0,extend='both');ax7[2,1].set_title('Q Bias',size=10)
     
     ax7[0,0].set_ylabel('km',size=10)
     ax7[1,0].set_ylabel('km',size=10)
