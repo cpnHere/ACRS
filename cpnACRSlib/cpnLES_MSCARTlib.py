@@ -1298,12 +1298,28 @@ class DHARMA_onmp(object):
         for i in np.arange(self.x.size):
             for j in np.arange(self.y.size):
                 w_tau[:,i,j]=w_tauDIVc[:,i,j]*c[i,j]
-        #calculating vertically weighted number concentration
-        dN_vw=np.trapz(self.DHARMA.dN_drops.sum(axis=0)*w_tau,tau,axis=0)
+        #computing vertically weighted number concentration
+        dN_vw = -np.einsum('izxy,zxy,zxy->ixy',self.DHARMA.dN_drops,w_tau,self.dTau[band,:])
+        #computing re_dN_vw, re from vertically weighted DSDs (Hansen & Travis 1974 2.53, Miller et. al. 2016)
+        N2wt=-np.einsum('izxy,zxy,zxy->ixy',self.DHARMA.dN_drops,w_tau,self.dTau[band,:])
+        num = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**3,N2wt)
+        num = np.trapz(num,self.DHARMA.r_drops,axis=0)
+        den = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,N2wt)
+        den = np.trapz(den,self.DHARMA.r_drops,axis=0)
+        re_dN_vw = num/den
+        #computing ve_dN_vw, ve from vertically weighted DSDs (Hnasen & Travis 1974 2.53, Miller et. al. 2016)
+        ve_dN_vw=np.zeros_like(den,dtype=float)
+        for i in np.arange(self.x.size):
+            for j in np.arange(self.y.size):
+                rMinre = self.DHARMA.r_drops-re_dN_vw[i,j]
+                num    = self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2*N2wt[:,i,j]*rMinre**2
+                num    = np.trapz(num,self.DHARMA.r_drops)
+                ve_dN_vw[i,j] = 1/re_dN_vw[i,j]**2*num/den[i,j]
+        
         #calculating vertically weighted cloud optical thickness ?? (:D LOL)
         end=time.time()
         print('%0.2f mins elapsed!'%((end-start)/60))
-        return Re_vw,Ve_vw,dN_vw,re_tau,ve_tau,w_tau,tau
+        return Re_vw,Ve_vw,dN_vw,re_tau,ve_tau,w_tau,tau,re_dN_vw,ve_dN_vw
     def setup_reVW(self,mie_name,lesCname,dgSZA,dgVZA,a=1,b=0,lesBinEd=None,mie_path=None,band=None,fpath=None,\
                    replace=None):
         '''
@@ -1313,7 +1329,7 @@ class DHARMA_onmp(object):
         from vertical_weighting_psudo_ret import LES_psudo_rets
         VW=LES_psudo_rets(self,mie_name,mie_path,dgSZA,dgVZA,a,b,band=band,replace=replace)
         if VW.replace=='1':
-            VW.Re,VW.Ve,VW.dN,VW.re_tau,VW.ve_tau,VW.w_tau,VW.tau=self.find_reVW(mie_name,lesCname,dgSZA,dgVZA,a=a,b=b,mie_path=mie_path,band=band)  
+            VW.Re,VW.Ve,VW.dN,VW.re_tau,VW.ve_tau,VW.w_tau,VW.tau,VW.Re_dN_vw,VW.Ve_dN_vw = self.find_reVW(mie_name,lesCname,dgSZA,dgVZA,a=a,b=b,mie_path=mie_path,band=band)  
             VW.Tau=VW.tau[0,:,:]
             VW.saveVW()
         else:
