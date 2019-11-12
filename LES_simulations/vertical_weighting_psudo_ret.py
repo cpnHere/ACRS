@@ -76,12 +76,24 @@ class LES_psudo_rets(object):
         PC.dims[1].label='y'
         PC.attrs['units']='Microns'
         PC.attrs["long_name"]='Vertically_Weighted_Cloud_Effective_Radius'
-    
+
         PC=f.create_dataset('Ve',data=self.Ve)
         PC.dims[0].label='x'
         PC.dims[1].label='y'
         PC.attrs['units']='None'
         PC.attrs["long_name"]='Vertically_Weighted_Cloud_Effective_Variance'
+        
+        PC=f.create_dataset('Re_dN_vw',data=self.Re_dN_vw)
+        PC.dims[0].label='x'
+        PC.dims[1].label='y'
+        PC.attrs['units']='Microns'
+        PC.attrs["long_name"]='Cloud_Effective_Radius_from_Vertically_weighted_DSD'
+    
+        PC=f.create_dataset('Ve_dN_vw',data=self.Ve_dN_vw)
+        PC.dims[0].label='x'
+        PC.dims[1].label='y'
+        PC.attrs['units']='None'
+        PC.attrs["long_name"]='Cloud_Effective_Variance_from_Vertically_weighted_DSD'
 
         PC=f.create_dataset('Tau',data=self.Tau)
         PC.dims[0].label='x'
@@ -140,19 +152,21 @@ class LES_psudo_rets(object):
     def loadVW(self,):
         filename=self.fpath+self.fname+'.hdf5'
         f=h5py.File(filename,'r')
-        self.fpath=f.attrs['DHARMA_LES_PATH']
-        self.mie_path=f.attrs['MIE_PATH']
-        self.Re=f['Re'][:]   
-        self.Ve=f['Ve'][:]    
-        self.Tau=f['Tau'][:]    
-        self.dN=f['dN'][:]        
-        self.re_tau=f['Re_3D'][:]    
-        self.ve_tau=f['Ve_3D'][:]    
-        self.w_tau=f['W'][:]        
-        self.tau=f['tau'][:]    
-        self.x=f['x'][:]   
-        self.y=f['y'][:]        
-        self.z=f['z'][:]
+        self.fpath    = f.attrs['DHARMA_LES_PATH']
+        self.mie_path = f.attrs['MIE_PATH']
+        self.Re       = f['Re'][:] 
+        self.Ve       = f['Ve'][:]    
+        self.Re_dN_vw = f['Re_dN_vw'][:]
+        self.Ve_dN_vw = f['Ve_dN_vw'][:]
+        self.Tau      = f['Tau'][:]    
+        self.dN       = f['dN'][:]        
+        self.re_tau   = f['Re_3D'][:]    
+        self.ve_tau   = f['Ve_3D'][:]    
+        self.w_tau    = f['W'][:]        
+        self.tau      = f['tau'][:]    
+        self.x        = f['x'][:]   
+        self.y        = f['y'][:]        
+        self.z        = f['z'][:]
         f.close()
         
 if __name__=='__main__':
