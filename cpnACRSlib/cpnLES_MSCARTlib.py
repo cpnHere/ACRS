@@ -1274,7 +1274,8 @@ class DHARMA_onmp(object):
         sza=np.deg2rad(dgSZA)
         vza=np.deg2rad(dgVZA)
         B=1/np.cos(sza)+1/np.cos(vza)
-        c=1/np.trapz(tau**b*np.exp(-a*B*tau),tau,axis=0)
+        c=1/np.einsum('zxy,zxy->xy',tau**b*np.exp(-a*B*tau),self.dTau[band,:])
+        #c=1/np.trapz(tau**b*np.exp(-a*B*tau),tau,axis=0)
         w_tauDIVc=tau**b*np.exp(-a*B*tau)
         print('Calculating re and ve ...')
         #calculating re_tau (Hansen & Travis 1974 2.53)
@@ -1283,7 +1284,8 @@ class DHARMA_onmp(object):
         den=np.einsum('r,rzxy->rzxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,self.DHARMA.dN_drops)
         den=np.trapz(den,self.DHARMA.r_drops,axis=0)
         re_tau=num/den
-        Re_vw=c*np.trapz(re_tau*w_tauDIVc,tau,axis=0)
+        Re_vw=c*np.einsum('zxy,zxy->xy',re_tau*w_tauDIVc,self.dTau[band,:])
+        #Re_vw=c*np.trapz(re_tau*w_tauDIVc,tau,axis=0)
         #calculating ve_tau (Hanse & Travis 1974 2.54)
         rMinre=np.zeros_like(self.DHARMA.dN_drops,dtype=float)
         for i in np.arange(self.x.size):
@@ -1293,7 +1295,8 @@ class DHARMA_onmp(object):
         num=np.einsum('r,rzxy->rzxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,self.DHARMA.dN_drops*rMinre**2)
         num=np.trapz(num,self.DHARMA.r_drops,axis=0)
         ve_tau=num/den/re_tau**2
-        Ve_vw=c*np.trapz(ve_tau*w_tauDIVc,tau,axis=0)
+        Ve_vw=c*np.einsum('zxy,zxy->xy',ve_tau*w_tauDIVc,self.dTau[band,:])
+        #Ve_vw=c*np.trapz(ve_tau*w_tauDIVc,tau,axis=0)
         w_tau=np.zeros_like(w_tauDIVc,dtype=float)
         for i in np.arange(self.x.size):
             for j in np.arange(self.y.size):
@@ -1301,10 +1304,9 @@ class DHARMA_onmp(object):
         #computing vertically weighted number concentration
         dN_vw = -np.einsum('izxy,zxy,zxy->ixy',self.DHARMA.dN_drops,w_tau,self.dTau[band,:])
         #computing re_dN_vw, re from vertically weighted DSDs (Hansen & Travis 1974 2.53, Miller et. al. 2016)
-        N2wt=-np.einsum('izxy,zxy,zxy->ixy',self.DHARMA.dN_drops,w_tau,self.dTau[band,:])
-        num = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**3,N2wt)
+        num = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**3,dN_vw)
         num = np.trapz(num,self.DHARMA.r_drops,axis=0)
-        den = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,N2wt)
+        den = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,dN_vw)
         den = np.trapz(den,self.DHARMA.r_drops,axis=0)
         re_dN_vw = num/den
         #computing ve_dN_vw, ve from vertically weighted DSDs (Hnasen & Travis 1974 2.53, Miller et. al. 2016)
@@ -1312,7 +1314,7 @@ class DHARMA_onmp(object):
         for i in np.arange(self.x.size):
             for j in np.arange(self.y.size):
                 rMinre = self.DHARMA.r_drops-re_dN_vw[i,j]
-                num    = self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2*N2wt[:,i,j]*rMinre**2
+                num    = self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2*dN_vw[:,i,j]*rMinre**2
                 num    = np.trapz(num,self.DHARMA.r_drops)
                 ve_dN_vw[i,j] = 1/re_dN_vw[i,j]**2*num/den[i,j]
         
