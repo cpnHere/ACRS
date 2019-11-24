@@ -1261,7 +1261,7 @@ class DHARMA_onmp(object):
             self.setup_dTau(mie_name,lesBinEd=lesBinEd,mie_path=mie_path)
         if band is None:
             band=1
-            print('Deafault wavelength %0.3f being selected'%(self.c_mie.wvl[band]))
+            print('Deafault wavelength %0.3f was selected'%(self.c_mie.wvl[band]))
             print('Available wavelengths:'+str(self.c_mie.wvl))
         self.zTau=np.cumsum(self.dTau,axis=1)
         self.zTau0top=np.zeros_like(self.zTau,dtype=float)
@@ -1279,10 +1279,10 @@ class DHARMA_onmp(object):
         w_tauDIVc=tau**b*np.exp(-a*B*tau)
         print('Calculating re and ve ...')
         #calculating re_tau (Hansen & Travis 1974 2.53)
-        num=np.einsum('r,rzxy->rzxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**3,self.DHARMA.dN_drops)
-        num=np.trapz(num,self.DHARMA.r_drops,axis=0)
-        den=np.einsum('r,rzxy->rzxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,self.DHARMA.dN_drops)
-        den=np.trapz(den,self.DHARMA.r_drops,axis=0)
+        num=np.einsum('r,rzxy->zxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**3,self.DHARMA.dN_drops)
+        #num=np.trapz(num,self.DHARMA.r_drops,axis=0) dN_drops is dN, not n(r)
+        den=np.einsum('r,rzxy->zxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,self.DHARMA.dN_drops)
+        #den=np.trapz(den,self.DHARMA.r_drops,axis=0) dN_drops is dN, not n(r)
         re_tau=num/den
         Re_vw=c*np.einsum('zxy,zxy->xy',re_tau*w_tauDIVc,self.dTau[band,:])
         #Re_vw=c*np.trapz(re_tau*w_tauDIVc,tau,axis=0)
@@ -1292,8 +1292,8 @@ class DHARMA_onmp(object):
             for j in np.arange(self.y.size):
                 for k in np.arange(self.DHARMA.z.size):
                     rMinre[:,k,i,j]=self.DHARMA.r_drops-re_tau[k,i,j]
-        num=np.einsum('r,rzxy->rzxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,self.DHARMA.dN_drops*rMinre**2)
-        num=np.trapz(num,self.DHARMA.r_drops,axis=0)
+        num=np.einsum('r,rzxy->zxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,self.DHARMA.dN_drops*rMinre**2)
+        #num=np.trapz(num,self.DHARMA.r_drops,axis=0)
         ve_tau=num/den/re_tau**2
         Ve_vw=c*np.einsum('zxy,zxy->xy',ve_tau*w_tauDIVc,self.dTau[band,:])
         #Ve_vw=c*np.trapz(ve_tau*w_tauDIVc,tau,axis=0)
@@ -1304,19 +1304,19 @@ class DHARMA_onmp(object):
         #computing vertically weighted number concentration
         dN_vw = -np.einsum('izxy,zxy,zxy->ixy',self.DHARMA.dN_drops,w_tau,self.dTau[band,:])
         #computing re_dN_vw, re from vertically weighted DSDs (Hansen & Travis 1974 2.53, Miller et. al. 2016)
-        num = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**3,dN_vw)
-        num = np.trapz(num,self.DHARMA.r_drops,axis=0)
-        den = np.einsum('r,rxy->rxy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,dN_vw)
-        den = np.trapz(den,self.DHARMA.r_drops,axis=0)
+        num = np.einsum('r,rxy->xy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**3,dN_vw)
+        #num = np.trapz(num,self.DHARMA.r_drops,axis=0)
+        den = np.einsum('r,rxy->xy',self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2,dN_vw)
+        #den = np.trapz(den,self.DHARMA.r_drops,axis=0)
         re_dN_vw = num/den
-        #computing ve_dN_vw, ve from vertically weighted DSDs (Hnasen & Travis 1974 2.53, Miller et. al. 2016)
-        ve_dN_vw=np.zeros_like(den,dtype=float)
+        #computing ve_dN_vw, ve from vertically weighted DSDs (Hnasen & Travis 1974 2.53, Miller et. al. 2016) 
+        ve_dN_vw=np.zeros_like(re_dN_vw,dtype=float)
         for i in np.arange(self.x.size):
             for j in np.arange(self.y.size):
                 rMinre = self.DHARMA.r_drops-re_dN_vw[i,j]
                 num    = self.qe_avg[band,:]*self.alb_av[band,:]*self.DHARMA.r_drops**2*dN_vw[:,i,j]*rMinre**2
-                num    = np.trapz(num,self.DHARMA.r_drops)
-                ve_dN_vw[i,j] = 1/re_dN_vw[i,j]**2*num/den[i,j]
+    #            num    = np.trapz(num,obj.DHARMA.r_drops)
+                ve_dN_vw[i,j] = 1/re_dN_vw[i,j]**2*num.sum()/den[i,j]
         
         #calculating vertically weighted cloud optical thickness ?? (:D LOL)
         end=time.time()
