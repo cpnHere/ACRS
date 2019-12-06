@@ -58,7 +58,7 @@ def add_cloud_mask(dict_atr,cldM,dictionary=False):
     '''
     A genralized function to add a cloud mask.
     Be careful about the content. All the attributes that satisfy certain condtions 
-    will be rotated. So make sure there are no any array that SHOULD NOT BE ROTATED!!
+    will be masked. So make sure there are no any array that SHOULD NOT BE MASKED!!
     -----------------------------------------------------------------------------------
     dict_atr + dictionary=False: dict_atr must be an object. Will search over all attributes.
     dict_atr + dictionary=True : dict_atr must be a dictionary
