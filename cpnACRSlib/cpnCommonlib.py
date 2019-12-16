@@ -131,6 +131,30 @@ def write_latex_table(X,table_name,colnames=None,rownames=None,stl='%0.2f',row_s
             f1.write('\hline\n')
     f1.write('\hline\n')
     f1.close()
+def panda_to_latex_table(df,tab_name,rp=False, index=False, float_format='%0.2f'):
+    '''
+    df: DataFrame
+        df= {'row1col1' :['col2','col3','col4'],\
+             'row2'     :[x,x,x],\
+             'row3'     :[x,x,x],\
+             'row4'     :[x,x,x]}
+    tab_name: 'table_name.dat'
+    To save as latex tables
+    Usage:
+    usepackage(booktabs)
+    input(table_name)
+    '''
+    if not(os.path.isfile(tab_name)):
+        rp=True
+    if not(rp) and os.path.isfile(tab_name):
+        usr=input('Replace existing file?: ')
+        if usr=='y':
+            rp=True
+    if rp:
+        f1=open(tab_name,'w')
+        f1.write(df.to_latex(index=index,float_format=float_format))
+        f1.close()
+        print(tab_name + ' SAVED!')
 '''
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FIGURES
