@@ -18,16 +18,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 sza='140'
-band='0p470'
+band ='0p865'
+bandx='865'
 nmlpath='fracb'+band+'_bins/'#*.nml path for 1D runs
 fdpath='results/fracb'+band+'_bins/'
 
-dsNew=MSlib.POLCARTdset('dsNew','/umbc/xfs1/zzbatmos/users/charaj1/Toy_clouds_MSCART/Fractal_Cloud/1Druns/fracb'+band+'_bins')
-dsNew.readPOLCARThdf5('fractal_StCu_ACA_b'+band+'_x40km_H0p5_AOT0p25_H0p5_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5','../results_aca/b'+band+'/')
+dsNew=MSlib.POLCARTdset('dsNew','/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Toy_clouds/Fractal_Cloud/1Druns/fracb'+band+'_bins')
+dsNew.readPOLCARThdf5('fractal_cld_b'+bandx+'re12ve05_x40km_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5','../results/b'+band+'/')
 #dsNew.readPOLCARThdf5('fractal_StCu_ACA_b'+band+'_x40km_H0p5_AOT0p25_H0p5_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5','../results_aca/b'+band+'/')
 #lib.collectColsMSCART('OP_dharma_008036_full_3_26_binsy9x9_MSCART_SZA060_SAA030_VAA000plus_NPH1e5.nc','results/OP_dharma_008036_full_3_26_bins/',dsNew,'MSCARToutTest.hdf5')
 
-d3D=MSlib.LES_field('fractal_StCu_ACA_b0p470_x40km_H0p5_AOT0p25_H0p5.nc',dpath='../')
+d3D=MSlib.LES_field('fractal_cld_b865re12ve05_x40km.nc',dpath='../')
 d3D.readLES_field()
 
 dsNew.MeanPRad[:]=np.nan
@@ -35,7 +36,7 @@ have_all_files=True
 second_test=False
 missing_count=0
 for j in np.arange(0,dsNew.MeanPRad.shape[1],1):
-    fname='fractal_StCu_ACA_b'+band+'_x40km_H0p5_AOT0p25_H0p5y0x'+str(j)+'_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.nc'
+    fname='fractal_cld_b'+bandx+'re12ve05_x40kmy0x'+str(j)+'_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.nc'
     ds1D=MSlib.POLCARTdset('ds1D',nmlpath)
     print(fname)
     try:
@@ -81,8 +82,8 @@ for j in np.arange(0,dsNew.MeanPRad.shape[1],1):
     
 if have_all_files:
     print('No missing files found!!')
-    dsNew.fname=dsNew.fname.split('_MSCART',1)[0]+'_MSCART_1D_bins'+dsNew.fname.split('_MSCART',1)[1].split('.',1)[0]+'.hdf5'
-    dsNew.savePOLCARThdf5(dsNew.fname,dpath='results/fracb'+band+'_bins/',pc_format='fractal_1D',action='Fractal_analysis')
+    dsNew.fname=dsNew.fname.split('_MSCART',1)[0]+'_1D_bins_MSCART'+dsNew.fname.split('_MSCART',1)[1].split('.',1)[0]+'.hdf5'
+    dsNew.savePOLCARThdf5(dsNew.fname,dpath='results/fracb'+band+'_bins/',pc_format='fractal_1D',action='Spot3D_paper_revision')
 
 else:
     print('%d files are missing!!'%missing_count)
