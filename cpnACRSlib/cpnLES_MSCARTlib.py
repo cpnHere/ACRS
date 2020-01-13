@@ -1379,6 +1379,34 @@ class DHARMA_onmp(object):
                     if dlwp[:j,k,l].sum()>th:
                         self.ctop[k,l]=ATEX.z[j]
                         break
+    def set_cot_top(self,band=1):
+        '''
+        Setup self.cot_top 2D array with cloud top vertical indices of each column.
+        Use self.DHARMA.z get the altitude.
+        '''
+        if hasattr(self,"cot_top"):
+            print("cot_top already exist!! ")
+        else:
+            _,z,x,y = self.dTau.shape
+            if hasattr(self,"dTau"):
+                tau = np.cumsum(self.dTau,axis=1)
+                print("%0.3f band selected to compute COT-based cloud top"%self.c_mie.wvl[band])
+                cot_top = np.zeros((x,y),dtype=int)
+                for xi in range(x):
+                    for yi in range(y):
+                        max_tau = 0
+                        topi = 0
+                        for zi in range(z):
+                            if tau[band,zi,xi,yi] > max_tau:
+                                max_tau = tau[band,zi,xi,yi]
+                                topi = zi
+                        cot_top[xi,yi] = topi
+                max_ctop = self.DHARMA.z[cot_top.max()]/1e3
+                print("COT-based domain cloud top: %0.2f km"%max_ctop)
+                self.cot_top = cot_top
+                print("self.cot_top setup successfully")    
+            else:
+                print('self.dTau does not exist!!! Use self.setup_dTau() to setup')
         
     def find_Bext(self,obj):
         '''
