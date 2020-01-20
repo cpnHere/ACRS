@@ -29,10 +29,10 @@ job=int(sys.argv[5])
 MSCART=str(sys.argv[6])
 NPH=str(sys.argv[7])
 n_grid=int(sys.argv[8])
-over_write=True
+over_write=False
 
 print('Assume n_xgrd=n_ygrd=%d'%n_grid)
-i=str(job/n_grid)
+i=str(int(job/n_grid))
 j=str(job%n_grid)
 fn_pattern=field_pat+'y'+i+'x'+j+'.nc'
 for f in os.listdir(field_path):
