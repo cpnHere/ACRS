@@ -1093,7 +1093,7 @@ class LES_pseudo_rets(object):
             print('Deafault wavelength %0.3f being selected'%(les_onmp.c_mie.wvl[band]))
             print('Available wavelengths:'+str(les_onmp.c_mie.wvl))        
         fname=les_onmp.fname.split('.',1)[0]+'_'+mie_name+'_SZA%03d_VZA%03d_b'%(dgSZA,dgVZA)+\
-            ("%0.3f"%les_onmp.c_mie.wvl[band]).replace('.','p')+'a%d_b%d'%(a,b)
+            ("%0.3f"%les_onmp.c_mie.wvl[band]+'a%0.1f_b%0.1f'%(a,b)).replace('.','p')
         self.fname=fname.replace('.','p')
         self.mie_path=mie_path
         self.les_onmp=les_onmp
