@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --job-name=fractal0p865
-#SBATCH --output=slurm-fractal_cld_b865re12ve05_x40km.out
+#SBATCH --job-name=fractal0p860
+#SBATCH --output=slurm-fractal_cld_b0p865re12ve05_x40km.out
 #SBATCH --partition=batch
-#SBATCH --qos=short
+#SBATCH --qos=short+
 #SBATCH --mem=2500
 #SBATCH --time=1:00:00
 #SBATCH --array=1-100%100
@@ -15,7 +15,7 @@ band='0p865'
 job=$SLURM_ARRAY_TASK_ID
 
 echo ${job} $HOSTNAME
-fn=$(python LES_MSCART_setup.py 140 0 fractal_cld_b865re12ve05_x40km.nc 2>&1)
+fn=$(python LES_MSCART_setup.py 100 0 fractal_cld_b865re12ve05_x40km.nc 2>&1)
 echo ${fn}
 ${MSCART} 10 ${NPH} 0 ${fn}.nml results/b${band}/${fn}_NPH${NPH}_${job}.nc
 #fn=$(python LES_MSCART_setup.py 180 2>&1)

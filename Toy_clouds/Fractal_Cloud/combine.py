@@ -13,7 +13,7 @@ def read_mscart(file_name):
     print(file_name)
     try:
         MC = netCDF4.Dataset(file_name, 'r')
-    except RuntimeError:
+    except FileNotFoundError:
         MC = netCDF4.Dataset(rpl_file,'r')
         missing_cnt=missing_cnt+1
         print('-------MISSING!!!------  '+str(missing_cnt))
@@ -38,7 +38,7 @@ def sts_mscart(file_prefix, nexp):
    CRMSE = np.zeros((nsrc, npr, npy, npx, nstokes))
    CTime = 0.0
 
-   for i in xrange(nexp):
+   for i in range(nexp):
       (nbat, Time, Mean, RMSE) = read_mscart(file_prefix+'_'+str(i+1)+'.nc')
       CMean = CMean + Mean
       CRMSE = CRMSE + RMSE**2 * (nbat - 1) + Mean**2
@@ -80,23 +80,23 @@ def combine_mscart(file_prefix):
    print(dpath+file_prefix+'.nc Saved!! ')
    return None
 
-dpath='results_aca/b0p470/'
+dpath='results/b2p13/'
 #fnames=['OP_dharma_008036_full_3_26_MSCART_SSA020_SAA030_VAA000_NPH2e6',\
 #        'OP_dharma_008036_full_3_26_MSCART_SSA020_SAA030_VAA180_NPH2e6']
-fnames=['fractal_StCu_ACA_b0p470_x40km_H0p5_AOT0p25_H0p5_MSCART_SZA140_SAA000_VAA000plus_NPH1e5']
+fnames=['fractal_cld_b2p13re12ve05_x40km_MSCART_SZA100_SAA000_VAA000plus_NPH1e5']
 runs=100
 glb_nbat=[]
 for i in np.arange(0,np.size(fnames)):
-    rpl_file=dpath+fnames[i]+'_8.nc'
+    rpl_file=dpath+fnames[i]+'_3.nc'
     missing_cnt=0
     combine_mscart(fnames[i])
     print(str(missing_cnt)+' of missing files were replaced by '+rpl_file)
 
 #saving as hdf5
 f_name=fnames[0]
-fracSZAx=POLCARTdset('fracSZAx','/umbc/xfs1/zzbatmos/users/charaj1/Toy_clouds_MSCART/Fractal_Cloud/')
+fracSZAx=POLCARTdset('fracSZAx','/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Toy_clouds/Fractal_Cloud/')
 fracSZAx.readMSCARTplus(f_name+'.nc',fdpath=dpath,step=True)
-fracSZAx.savePOLCARThdf5(fracSZAx.fdpath+fracSZAx.fname.split('.',1)[0]+'.hdf5',pc_format='fractal_cloud',action='Fractal_cloud_analysis')
+fracSZAx.savePOLCARThdf5(fracSZAx.fdpath+fracSZAx.fname.split('.',1)[0]+'.hdf5',pc_format='fractal_cloud',action='spot3D_revision')
 
 
 #combine_mscart('dharma_008036_full_MSCART_SZA20_SAA30_V180_3_26')
