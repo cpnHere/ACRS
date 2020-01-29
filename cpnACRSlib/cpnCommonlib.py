@@ -22,7 +22,20 @@ import matplotlib as mp
 class pkl_classes(object):
     def __init__(self,):
         self.class_names=[]
+# Disable
+def blockPrint():
+    '''
+    To block printing text 
+    '''
+    sys.stdout = open(os.devnull, 'w')
 
+# Restore
+def enablePrint():
+    '''
+    To enable printing text
+    '''
+    sys.stdout = sys.__stdout__
+    
 def movingaverage (values, window):
     '''
     Return a new array with the moving averaged values of the given window.
