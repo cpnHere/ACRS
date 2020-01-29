@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#SBATCH --job-name=RCPlRet1Dp860S160
-#SBATCH --output=slurm%J-RCPlRet1Dp860S160.out
+#SBATCH --job-name=ACPlRet1Dp860S160
+#SBATCH --output=slurm%J-ACPlRet1Dp860S160.out
 #SBATCH --partition=batch
-#SBATCH --qos=long+
+#SBATCH --qos=medium+
 #SBATCH --mem=14000
-python pol_cloud_ret.py 0p860 160 1D Breon full _pol_ret_V5 RC
-#nproc
+python pol_cloud_ret.py 0p860 160 1D Breon full _pol_ret_V5 AC
+#Look the python file to choose different initila guesses.
 #lscpu
 #mpirun -n 16 python comm.py
 #pol_ret_curvefit_V1_sml: small LUT (lesser number of re and ve)

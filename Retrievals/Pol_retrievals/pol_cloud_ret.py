@@ -231,25 +231,33 @@ def Example01():
     ax5.set_xlabel('km')
     ax5.set_ylabel('km')
     fig5.show()
-def getGuess(cname,method,rTyp,tail):
+def getGuess(cname,method,rTyp,tail=None):
     '''
-    To read abc for domain mean retrievals from previous results. 
+    tail is given:  read abc from domain mean retrievals from previous results. 
+    tail is not given: use version 5 old results to get first guess.
     '''
-    filename=cname+'_'+method+'_mean'+tail
     abc=None
-    if os.path.isfile(filename+'.pkl'):
-        print('Domain mean retrievals exist: '+filename)
-        if rTyp=='mean':
-            print('Since \'mean\' retrievals being executed, an initial guess will not be used.')
-        else:
-            data=cpn.load_obj(filename)
-            abc   =data['abc']
+    if tail is None:
+        filename='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/Pol_retrievals/results/pol_ret_V5/'+\
+            cname+'_'+method+'_full_pol_ret_V5_MPI'
+        data=cpn.load_obj(filename)
+        abc   =data['abc']
+        print('_full_pol_ret_V5_MPI results will be used to get the initial guess')
     else:
-        print('Domain mean retrievals not found!')
-    if abc is not None:
-        print('Domain mean retrievals will be used as the initial guess.')
-    elif not(rTyp == 'mean'):
-        print('To increase the efficienty, do domain mean retrievals first to get an initial guess.')
+        filename=cname+'_'+method+'_mean'+tail
+        if os.path.isfile(filename+'.pkl'):
+            print('Domain mean retrievals exist: '+filename)
+            if rTyp=='mean':
+                print('Since \'mean\' retrievals being executed, an initial guess will not be used.')
+            else:
+                data=cpn.load_obj(filename)
+                abc   =data['abc']
+        else:
+            print('Domain mean retrievals not found!')
+        if abc is not None:
+            print('Domain mean retrievals will be used as the initial guess.')
+        elif not(rTyp == 'mean'):
+            print('To increase the efficienty, do domain mean retrievals first to get an initial guess. Or use previous results')
     
     return abc
     
@@ -287,21 +295,13 @@ if __name__=='__main__':
     if not(spRT):
         # Q observations from RT simulations
         if case=='DY':
-            LEScase=LES_case('DYCOMS2_dharma_008036_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH2e6.hdf5',\
-                         '/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/',\
-                         RT1Dname='DYCOMS2_dharma_008036_b'+band+'_MSCART_1D_bins_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e5.hdf5')
+            LEScase=LES_case('DYCOMS2_'+str(sza)+'b'+band)
         elif case=='RC':
-            LEScase=LES_case('RICO_dharma_005044_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e6.hdf5',\
-                         '/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/',\
-                         RT1Dname='RICO_dharma_005044_b'+band+'_MSCART_1D_bins_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e5.hdf5')
+            LEScase=LES_case('RICO_'+str(sza)+'_b'+band)
         elif case=='AC':
-            LEScase=LES_case('ATEXc_dharma_007877_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e6.hdf5',\
-                         '/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/',\
-                         RT1Dname='ATEXc_dharma_007877_b'+band+'_MSCART_1D_bins_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e5.hdf5')
+            LEScase=LES_case('ATEXc_'+str(sza)+'_b'+band)
         elif case=='AP':
-            LEScase=LES_case('ATEXp_dharma_013067_b'+band+'_MSCART_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e6.hdf5',\
-                         '/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/',\
-                         RT1Dname='ATEXp_dharma_013067_b'+band+'_MSCART_1D_bins_SZA'+str(sza)+'_SAA000_VAA000plus_NPH1e5.hdf5')
+            LEScase=LES_case('ATEXp_'+str(sza)+'_b'+band)
             
                 
     '''
@@ -366,7 +366,15 @@ if __name__=='__main__':
     P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method,primaryBow=pBow)
     #gemet=4*(muS+muV)*0+1#No geometric correction
     gemet=4*(muS+muV)
-    ygabc=getGuess(cname,method,rTyp,tail)   
+    #ygabc=getGuess(cname,method,rTyp,tail)#give tail to use domain mean ret. to get initial guess
+    ygabc=getGuess(cname,method,rTyp)#don't give tail to use previous results to get initial guess
+    if ygabc is not None:
+        if ygabc.ndim==1 and Q_in2.ndim==3:
+            #if ygabc is only 3 values and the retrievals have be done for 2D Q_in2, 
+            #ygabc is converted to 2D array by repeating.
+            ytemp=np.zeros_like(Q_in2,dtype=float)
+            ytemp[:]=ygabc
+            ygabc=ytemp
     x=obsSca[P.Q_a1:P.Q_a2]
     start=time.time()
     if Q_in2.ndim==3:
@@ -394,7 +402,7 @@ if __name__=='__main__':
 #            os.system("echo \"Rsqs_max\t Re\t Ve\" > Rsqs_max.dat")
             for i in np.arange(Q_in2.shape[1]):
                 for j in np.arange(Q_in2.shape[2]):
-                    ret_Re[i,j],ret_Ve[i,j],abc[i,j,:],Qls[i,j],Rsq[i,j]=do_fitting(x,np.squeeze(y[P.Q_a1:P.Q_a2,i,j]),P,ygabc)
+                    ret_Re[i,j],ret_Ve[i,j],abc[i,j,:],Qls[i,j],Rsq[i,j]=do_fitting(x,np.squeeze(y[P.Q_a1:P.Q_a2,i,j]),P,ygabc[i,j,:])
                     yAll[i,j,:]=y[P.Q_a1:P.Q_a2,i,j]
                     c+=1
                     pc=c/Q_in2.shape[1]/Q_in2.shape[2]*100.0

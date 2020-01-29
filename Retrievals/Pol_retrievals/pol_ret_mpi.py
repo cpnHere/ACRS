@@ -49,7 +49,7 @@ if P.method=='Breon':
 for n in jobs:
     i=int(n/nxy)
     j=n%nxy
-    ret_Re[i,j],ret_Ve[i,j],abc[i,j,:],Qls[i,j],Rsq[i,j],flags[i,j]=do_fitting(x,np.squeeze(y[P.Q_a1:P.Q_a2,i,j]),P,ygabc)
+    ret_Re[i,j],ret_Ve[i,j],abc[i,j,:],Qls[i,j],Rsq[i,j],flags[i,j]=do_fitting(x,np.squeeze(y[P.Q_a1:P.Q_a2,i,j]),P,ygabc[i,j,:])
     yAll[i,j,:]=y[P.Q_a1:P.Q_a2,i,j]
 if rank>0:
     out={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'flags':flags}
