@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator)
 import os,string
 import scipy.signal as signal
+import scipy.optimize as opt
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 import pickle
 import mpl_toolkits.basemap as bm
@@ -35,7 +36,32 @@ def enablePrint():
     To enable printing text
     '''
     sys.stdout = sys.__stdout__
-    
+def fit_a_curve(xdata,ydata,label1='Data',label2='Fit',fig=None,ax=None):
+    '''
+    Do non-linear fit for x and y data.
+    '''
+    if fig is None:
+        fig,ax = plt.subplots()
+    def func(x, a, b, c):
+        '''
+        This is the function we are trying to fit to the data.
+        '''
+        return a * np.exp(-b * x) + c
+    # Plot the actual data
+    ax.plot(xdata, ydata, "k.", label=label1);
+
+    # The actual curve fitting happens here
+    optimizedParameters, pcov = opt.curve_fit(func, xdata, ydata);
+
+    # Use the optimized parameters to plot the best fit
+    ax.plot(xdata, func(xdata, *optimizedParameters),'k-',label=label2);
+
+    # Show the graph
+    ax.legend()
+    if fig is not None:
+        return fig,ax
+    else:
+        return None
 def movingaverage (values, window):
     '''
     Return a new array with the moving averaged values of the given window.
