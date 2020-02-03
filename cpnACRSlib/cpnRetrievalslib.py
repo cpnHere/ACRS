@@ -968,7 +968,7 @@ def fitBreon_noRsq(x,y,P,ygabc=None):
         return a*P.getP(Theta)+b*np.deg2rad(Theta)+c
     def fit(x,y,P,F,ygabc):
         R_sq=0.0
-        flag=0
+        flag=0.0
         abc=np.array([1,1,1])*np.nan;Re,Ve=np.nan,np.nan #For failed retrievals
         for i in P.Re:
             for j in P.Ve:
@@ -977,7 +977,7 @@ def fitBreon_noRsq(x,y,P,ygabc=None):
                     popt, pcov = curve_fit(F, x, y,p0=ygabc)
                 except RuntimeError:
                     print("Optimal parameters not found: Number of calls to function has reached maxfev = 800")
-                    flag=1
+                    flag=1.0
                 #Finding R^2 value
                 residuals = y- F(x, *popt)
                 ss_res = np.sum(residuals**2)
