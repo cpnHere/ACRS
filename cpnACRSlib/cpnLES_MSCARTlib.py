@@ -494,9 +494,18 @@ class POLCARTdset(object):
         self.MeanPRad=np.delete(self.MeanPRad,removNadir_i,0)
         self.RMSEPRad=np.delete(self.RMSEPRad,removNadir_i,0)
         if 'ScatA' in vars(self):
-            self.ScatA=np.delete(self.ScatA,removNadir_i)
-            
-        
+            self.ScatA=np.delete(self.ScatA,removNadir_i)            
+    def read_from_nml(self,ix):
+        '''
+        Reading values from *.nml files. Confirm indexes when uses!!!
+        54: vec_PRad_zlv(1)
+        '''
+        fl = open(self.nmldpath+self.fname.split('_NPH',1)[0]+'.nml')
+        data = fl.readlines()[:]
+        fl.close()
+        line = [s.split(',\n',1)[0] for s in data][ix]
+        print(line)
+        return float(line.split('=',1)[1].replace(' ',''))        
 class LES_field(object):
     def __init__(self,fname,dpath=None):
         self.fname=fname
