@@ -783,9 +783,14 @@ class Pmat(object):
     method: 
         Breon   :Breon et. al. 2005 
         BreonMod:Breon et. al. 2005 albeit F=aP+b*cos()**2+c
+    Qa1Qa2, SZA:
+        Qa1Qa2, SZA = None,None => uses self.findQ12a2_2() to get Q_a1, Q_a2
+        Qa1Qa2, SZA = <any>,'160' => uses SZA to get predefined Q_a1, Q_a2
+        Qa1Qa2, SZA = [55,85],None => uses given Qa1Qa2    
     '''
-    def __init__(self,Re,Ve,MieA,MieP12,ObsA,method='Breon',primaryBow=False,Qa1Qa2=None):
+    def __init__(self,Re,Ve,MieA,MieP12,ObsA,method='Breon',primaryBow=False,Qa1Qa2=None,SZA=None):
         print('Pol. ret. method: '+method+' primaryBow: '+str(primaryBow))
+        preQa1Qa2 = {160:[55,85],140:[35,65],120:[15,45]}
         self.method=method
         if primaryBow:
             slt=135 #left scattering angle
@@ -798,10 +803,12 @@ class Pmat(object):
         #Selecting matching observation scattering angles to the library
         p12_a1=int(np.argwhere(MieA==slt))
         p12_a2=int(np.argwhere(MieA==srt))
-        if Qa1Qa2 is None:
-            Q_a1,Q_a2=self.findQa1a2_2(ObsA,slt,srt)
-        else:
-            Q_a1,Q_a2=Qa1Qa2[0],Qa1Qa2[1]
+        if SZA is not None:
+            Qa1Qa2 = preQa1Qa2[SZA]
+        else if Qa1Qa2 is None:
+            Qa1Qa2 = np.array(self.findQa1a2_2(ObsA,slt,srt))
+        print('Qa1Qa2: '+str(Qa1Qa2))
+        Q_a1,Q_a2=Qa1Qa2[0],Qa1Qa2[1]
         if Q_a1>Q_a2:
             Q_a1,Q_a2=Q_a2,Q_a1
         theQ=ObsA[Q_a1:Q_a2]
