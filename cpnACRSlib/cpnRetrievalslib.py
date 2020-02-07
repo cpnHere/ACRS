@@ -805,7 +805,7 @@ class Pmat(object):
         p12_a2=int(np.argwhere(MieA==srt))
         if SZA is not None:
             Qa1Qa2 = preQa1Qa2[SZA]
-        else if Qa1Qa2 is None:
+        elif Qa1Qa2 is None:
             Qa1Qa2 = np.array(self.findQa1a2_2(ObsA,slt,srt))
         print('Qa1Qa2: '+str(Qa1Qa2))
         Q_a1,Q_a2=Qa1Qa2[0],Qa1Qa2[1]
