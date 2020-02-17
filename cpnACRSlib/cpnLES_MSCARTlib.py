@@ -1224,6 +1224,18 @@ class DHARMA_onmp(object):
         qe_avg,_=self.get_qe_avg(mie_name,lesCname,mie_path,lesBinEd)
         extp3d=np.einsum('ji,i,iklm->jiklm',qe_avg,self.DHARMA.r_drops**2,self.DHARMA.dN_drops)*np.pi*1e-3#km^-1
         self.dTau=np.einsum('ijzxy,z->izxy',extp3d,self.dz*1e-3)   
+    def setup_zTau0top(self,):
+        '''
+        Setting-up tau vertical axis. Both 0-top and o-bottom
+        self.dTau must be computed before callling this.
+        '''
+        self.zTau=np.cumsum(self.dTau,axis=1)
+        self.zTau0top=np.zeros_like(self.zTau,dtype=float)
+        for i in np.arange(self.x.size):
+            for j in np.arange(self.y.size):
+                for wv in np.arange(3):
+                    self.zTau0top[wv,:,i,j]=self.zTau[wv,:,i,j].max()-self.zTau[wv,:,i,j]
+        print('self.zTau, self.zTau0top created.')
     def get_qe_avg(self,mie_name,lesCname,mie_path=None,lesBinEd=None):
         self.readMie(mie_name,mie_path)
         c_mie=self.c_mie
@@ -1272,13 +1284,7 @@ class DHARMA_onmp(object):
             band=1
             print('Deafault wavelength %0.3f was selected'%(self.c_mie.wvl[band]))
             print('Available wavelengths:'+str(self.c_mie.wvl))
-        self.zTau=np.cumsum(self.dTau,axis=1)
-        self.zTau0top=np.zeros_like(self.zTau,dtype=float)
-        for i in np.arange(self.x.size):
-            for j in np.arange(self.y.size):
-                for wv in np.arange(3):
-                    self.zTau0top[wv,:,i,j]=self.zTau[wv,:,i,j].max()-self.zTau[wv,:,i,j]
-        print('self.zTau, self.zTau0top created.')
+        self.setup_zTau0top()
         tau=self.zTau0top[band,:]
         sza=np.deg2rad(dgSZA)
         vza=np.deg2rad(dgVZA)
@@ -1388,7 +1394,7 @@ class DHARMA_onmp(object):
                     if dlwp[:j,k,l].sum()>th:
                         self.ctop[k,l]=ATEX.z[j]
                         break
-    def set_cot_top(self,band=1):
+    def set_cot_top(self,band=1,ctop_tau=0.2):
         '''
         Setup self.cot_top 2D array with cloud top vertical indices of each column.
         Use self.DHARMA.z get the altitude.
@@ -1396,20 +1402,21 @@ class DHARMA_onmp(object):
         if hasattr(self,"cot_top"):
             print("cot_top already exist!! ")
         else:
-            _,z,x,y = self.dTau.shape
             if hasattr(self,"dTau"):
-                tau = np.cumsum(self.dTau,axis=1)
+                self.setup_zTau0top()
+                tau = self.zTau0top
+                _,z,x,y = tau.shape
                 print("%0.3f band selected to compute COT-based cloud top"%self.c_mie.wvl[band])
                 cot_top = np.zeros((x,y),dtype=int)
                 for xi in range(x):
                     for yi in range(y):
-                        max_tau = 0
+                        min_tau = ctop_tau 
                         topi = 0
                         for zi in range(z):
-                            if tau[band,zi,xi,yi] > max_tau:
-                                max_tau = tau[band,zi,xi,yi]
+                            if tau[band,zi,xi,yi] > min_tau:
+                                min_tau = 0
                                 topi = zi
-                        cot_top[xi,yi] = topi
+                        cot_top[xi,yi] = topi        
                 max_ctop = self.DHARMA.z[cot_top.max()]/1e3
                 print("COT-based domain cloud top: %0.2f km"%max_ctop)
                 self.cot_top = cot_top
