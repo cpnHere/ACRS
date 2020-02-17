@@ -154,6 +154,7 @@ class PSDs(object):
     Make sure D is a numpy float when you directly input a d array that read from 
     Mie output *.nc file.
     Convert input D by using np.asarray(arr,dtype=float)
+    D: diameter in microns
     '''
     def __init__(self,tag,D=None):
         self.tag=tag
@@ -243,13 +244,15 @@ class PSDs(object):
             self.n_lnS=np.pi*self.r**2*self.n_lnN
         else:
             print('First define n_lnN or n_lnV!')
-    def plot_nN(self,):
-        fig,ax=plt.subplots()
-        ax.plot(self.r,self.n_N)
-        ax.set_xlabel(r'r ($\mu m$)')
+    def plot_nN(self,fig=None,ax=None,ls='k-'):
+        if fig is None:
+            fig,ax=plt.subplots()
+            ax.set_xlabel(r'Radius ($\mu m$)')
+            ax.set_ylabel(r'Normalized PDF [$cm^{-3}\mu m^{-1}$]')
+        ax.plot(self.r,self.n_N,ls)
         fig.show()
         return fig,ax
-
+        
 class bulk_Mie(object):
     def __init__(self, fname,fdpath=None,psd=None,Mie=None):
         '''
