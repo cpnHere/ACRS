@@ -40,7 +40,7 @@ def savefig(fig,fig_ttl):
     cpn.savefig(fig,fig_ttl,'figures/')
 if __name__=='__main__':
     cpn.setup_figures(plt)
-    sza='160'
+    sza='140'
     vza=0
     #DYCOMS-II-----------------------------------------------------------------
     '''
@@ -74,13 +74,8 @@ if __name__=='__main__':
     '''
     #RICO-----------------------------------------------------------------
     #'''
-    les_new_path='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/'
-    
-    les_name='RICO_dharma_005044';NPH3D='1e6';NPH1D='1e5'
-    DYC0p860_sza=LES_case(les_name+'_b0p860_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e6.hdf5',les_new_path,\
-                            RT1Dname=les_name+'_b0p860_MSCART_1D_bins_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5')
-    DYC2p13_sza =LES_case(les_name+'_b2p13_MSCART_SZA'+sza+'_SAA000_VAA000plus_NPH1e6.hdf5',les_new_path,\
-                            RT1Dname=les_name+'_b2p13_MSCART_1D_bins_SZA'+sza+'_SAA000_VAA000plus_NPH1e5.hdf5')
+    DYC0p860_sza=LES_case('RICO_'+sza+'_b0p860')
+    DYC2p13_sza =LES_case('RICO_'+sza+'_b2p13')
     #'''
 
     ret_save_dir='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/NJK_retrievals/data/'
