@@ -766,7 +766,7 @@ class LES_case(object):
     def __init__(self,name,filenameExp=False):
         self.rotate1D='not_done'
         self.cloud_mask='not_done'
-        
+        self.name = name
         if filenameExp:
             fname_3d=name[0]
             fname_1D=name[1]
