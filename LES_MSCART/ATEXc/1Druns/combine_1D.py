@@ -98,8 +98,8 @@ for i in np.arange(0,dsNew.MeanPRad.shape[1],1):
 NPH=cname.split('NPH',1)[1]
 if have_all_files:
     print('No missing files found!!')
-    dsNew.fname=dsNew.fname.split('_MSCART',1)[0]+'_MSCART'+'_1D_bins'+dsNew.fname.split('_MSCART',1)[1].split('.',1)[0]
-    dsNew.savePOLCARThdf5(dsNew.fname.split('NPH',1)[0]+'NPH'+NPH+'.hdf5',dpath=fdpath,pc_format=pc_format,action=action)
+    dsNew.fname=cname.split('_MSCART',1)[0]+'_MSCART'+'_1D_bins'+cname.split('_MSCART',1)[1].split('.',1)[0]
+    dsNew.savePOLCARThdf5(dsNew.fname+'.hdf5',dpath=fdpath,pc_format=pc_format,action=action)
 
 else:
     print(missing_fnames)
