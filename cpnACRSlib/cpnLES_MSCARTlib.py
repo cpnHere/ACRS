@@ -763,7 +763,7 @@ class LES_case(object):
         case name ex. DYCOMS2_120_b0p860, filenameExp=False
         filename +path ex. name=['path_and_filename_3d','path_and_filename_1d'], filenameExp=True
     '''
-    def __init__(self,name,filenameExp=False):
+    def __init__(self,name,filenameExp=False,readfiles=True):
         self.rotate1D='not_done'
         self.cloud_mask='not_done'
         self.name = name
@@ -774,29 +774,30 @@ class LES_case(object):
             fname_3d=self.get_file_name(name+'_3D')
             fname_1D=self.get_file_name(name+'_1D')
         self.band=fname_3d.split('results/',1)[1].split('/',1)[0]
-        #3D RT
-        result_dir3d='results/'+self.band+'/'
-        base_dir3d=fname_3d.split('results',1)[0]
-        self.RT=POLCARTdset('LES',base_dir3d)
-        MSCARThdf=fname_3d.split(self.band+'/',1)[1]
-        self.RT.readPOLCARThdf5(MSCARThdf,dpath=base_dir3d+result_dir3d)
-        self.RT_field=LES_field(MSCARThdf.split('_MSCART',1)[0]+'.nc',dpath=base_dir3d)
-        self.RT_field.readLES_field()
-        #1D RT
-        
-        base_dir1d=fname_1D.split('1Druns',1)[0]
-        self.RT1D=POLCARTdset('LES1D',base_dir1d+'1Druns/LES'+self.band+'_bins/')
-        MSCARThdf1D=fname_1D.split('LES'+self.band+'_bins/',1)[1]
-        self.RT1D.readPOLCARThdf5(MSCARThdf1D,base_dir1d+'1Druns/results/LES'+self.band+'_bins/')
-        self.rotate_1D_domain()
-        self.xcens=(self.RT_field.xgrd[1:]+self.RT_field.xgrd[0:-1])/2
-        self.ycens=(self.RT_field.ygrd[1:]+self.RT_field.ygrd[0:-1])/2  
-        if type(self.RT.fname) is np.ndarray:
-            self.RT.fname=self.RT.fname[0].astype(str)
-        if type(self.RT1D.fname) is np.ndarray:
-            self.RT1D.fname=self.RT1D.fname[0].astype(str)
-        self.RT.remove_redundant_nadir()
-        self.RT1D.remove_redundant_nadir()
+        if readfiles:
+            #3D RT
+            result_dir3d='results/'+self.band+'/'
+            base_dir3d=fname_3d.split('results',1)[0]
+            self.RT=POLCARTdset('LES',base_dir3d)
+            MSCARThdf=fname_3d.split(self.band+'/',1)[1]
+            self.RT.readPOLCARThdf5(MSCARThdf,dpath=base_dir3d+result_dir3d)
+            self.RT_field=LES_field(MSCARThdf.split('_MSCART',1)[0]+'.nc',dpath=base_dir3d)
+            self.RT_field.readLES_field()
+            #1D RT
+            
+            base_dir1d=fname_1D.split('1Druns',1)[0]
+            self.RT1D=POLCARTdset('LES1D',base_dir1d+'1Druns/LES'+self.band+'_bins/')
+            MSCARThdf1D=fname_1D.split('LES'+self.band+'_bins/',1)[1]
+            self.RT1D.readPOLCARThdf5(MSCARThdf1D,base_dir1d+'1Druns/results/LES'+self.band+'_bins/')
+            self.rotate_1D_domain()
+            self.xcens=(self.RT_field.xgrd[1:]+self.RT_field.xgrd[0:-1])/2
+            self.ycens=(self.RT_field.ygrd[1:]+self.RT_field.ygrd[0:-1])/2  
+            if type(self.RT.fname) is np.ndarray:
+                self.RT.fname=self.RT.fname[0].astype(str)
+            if type(self.RT1D.fname) is np.ndarray:
+                self.RT1D.fname=self.RT1D.fname[0].astype(str)
+            self.RT.remove_redundant_nadir()
+            self.RT1D.remove_redundant_nadir()
     def read_rt_and_field_old(self,MSCARThdf,base_dir,result_dir=None,RT1Dname=None,band=None):
         '''
         Old __init__() function of this class. Atleast hdf file name and based_dir should be given.
@@ -923,7 +924,7 @@ class LES_case(object):
         '''
         self.bias3D1D =self.RT.MeanPRad[VZAi,:]-self.RT1D.MeanPRad[VZAi,:]
         self.impFac3D =self.bias3D1D/self.RT1D.MeanPRad[VZAi,:]
-    def get_bin_defs(vci):
+    def get_bin_defs(self,vci):
         '''
         To get pre-defined bin arrays for MSCART LES reflectance simulations
         vci: Give index (ix) as the following table
