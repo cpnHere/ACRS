@@ -320,6 +320,8 @@ def retrieve_NJK(VNIR,SWIR,VNIR_lut,SWIR_lut,reff_lut,tau_lut):
         #cost fnction
         cost_function=(VNIR_lut-VNIR)**2/(VNIR**2)+(SWIR_lut-SWIR)**2/(SWIR**2)
         p0=np.where(cost_function==cost_function.min())
+        if np.size(p0)>2: #When two minimums found
+            p0=(p0[0][0],p0[1][0])
         tau_guess=tau_matrix[p0]
         reff_guess=reff_matrix[p0]
         
