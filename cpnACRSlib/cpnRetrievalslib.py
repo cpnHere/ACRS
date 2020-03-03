@@ -122,10 +122,10 @@ def plotLUT(VNIR_lut,SWIR_lut,reff_lut,tau_lut,re_lines=None,figAx=None):
         axLUT.text(x.min(),y.min()-0.02,r'%d'%tau_lut[j],color='grey')
         axLUT.set_xlabel('VNIR Reflectance')
         axLUT.set_ylabel('SWIR Reflectance')
-    axLUT.set_xlim(0,VNIR_lut.max()+0.05)
-    axLUT.arrow(VNIR_lut.max()+.02,0.5,-0.05,-0.4,linestyle='-',head_width=0.02,\
+    axLUT.set_xlim(0,VNIR_lut.max()+0.2)
+    axLUT.arrow(VNIR_lut.max()+.1,0.5,0.03,-0.4,linestyle='-',head_width=0.02,\
               length_includes_head=True,color='grey')
-    axLUT.annotate(r' $r_e$($\mu m$)',xy=(VNIR_lut.max(),0.3),color='grey',rotation=85)
+    axLUT.annotate(r' $r_e$($\mu m$)',xy=(VNIR_lut.max()+0.12,0.3),color='grey',rotation=90)
     axLUT.arrow(0.2,0.05,VNIR_lut.max()-0.3,0,linestyle='-',head_width=0.02,\
               length_includes_head=True,color='grey')
     axLUT.annotate(r' $\tau$',xy=(VNIR_lut.max()/2,0),color='grey')
@@ -320,8 +320,6 @@ def retrieve_NJK(VNIR,SWIR,VNIR_lut,SWIR_lut,reff_lut,tau_lut):
         #cost fnction
         cost_function=(VNIR_lut-VNIR)**2/(VNIR**2)+(SWIR_lut-SWIR)**2/(SWIR**2)
         p0=np.where(cost_function==cost_function.min())
-        if np.size(p0)>2: #When two minimums found
-            p0=(p0[0][0],p0[1][0])
         tau_guess=tau_matrix[p0]
         reff_guess=reff_matrix[p0]
         
