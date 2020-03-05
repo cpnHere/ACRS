@@ -295,7 +295,7 @@ if __name__=='__main__':
     if not(spRT):
         # Q observations from RT simulations
         if case=='DY':
-            LEScase=LES_case('DYCOMS2_'+str(sza)+'b'+band)
+            LEScase=LES_case('DYCOMS2_'+str(sza)+'_b'+band)
         elif case=='RC':
             LEScase=LES_case('RICO_'+str(sza)+'_b'+band)
         elif case=='AC':
@@ -353,10 +353,7 @@ if __name__=='__main__':
         Q_in2= RT.MeanPRad[:,:,:,1]
     else:
         print('Error! Give valid rTyp!')
-    try:
-        cname=RT.fname.split('.',1)[0]
-    except AttributeError:
-        cname=(RT.fname[0].astype(str)).split('.',1)[0]
+    cname = LEScase.get_file_name(LEScase.name+'_'+dim).rsplit('/',1)[1].split('.',1)[0]
     savename=cname+'_'+method+'_'+rTyp+tail
     print(savename+' will be saved')
 
@@ -378,7 +375,7 @@ if __name__=='__main__':
     x=obsSca[P.Q_a1:P.Q_a2]
     start=time.time()
     if Q_in2.ndim==3:
-        y=np.einsum('ijk,i->ijk',-Q_in2,4*gemet) 
+        y=np.einsum('ijk,i->ijk',-Q_in2,gemet) 
         if mpi:
             mpi_data={'x':x,'y':y,'ygabc':ygabc,'P':P,'savename':savename}
             cpn.save_obj(mpi_data,'mpi_data_'+savename,rp=True)
