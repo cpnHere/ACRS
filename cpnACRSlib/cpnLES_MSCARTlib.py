@@ -869,7 +869,8 @@ class LES_case(object):
         filename['RICO_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb2p13_bins/RICO_dharma_005044_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['RICO_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb2p13_bins/RICO_dharma_005044_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['RICO_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/1Druns/results/LESb2p13_bins/RICO_dharma_005044_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
-    
+        '''
+        Old (wrong) simulations 
         filename['ATEXc_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXc_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXc_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
@@ -878,31 +879,56 @@ class LES_case(object):
         filename['ATEXc_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/results/b2p13/ATEXc_dharma_007877_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
         
         filename['ATEXc_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
-        filename['ATEXc_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
-        #filename['ATEXc_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
-        filename['ATEXc_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
-        #filename['ATEXc_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXc_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+		filename['ATEXc_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        '''
+        #------------------New ATEXc cases -------------------------
+        filename['ATEXc_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/results/b0p860/ATEXc_dharma_007877_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/results/b2p13/ATEXc_dharma_007877_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/results/b2p13/ATEXc_dharma_007877_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/results/b2p13/ATEXc_dharma_007877_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        
+        filename['ATEXc_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXc_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb0p860_bins/ATEXc_dharma_007877_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXc_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXc_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
-        #filename['ATEXc_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXc_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
-		#filename['ATEXc_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXc/1Druns/results/LESb2p13_bins/ATEXc_dharma_007877_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
-    
+        
+        '''
         filename['ATEXp_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXp_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXp_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXp_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXp_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXp_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
-        filename['ATEXp_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
-        #filename['ATEXp_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
-        filename['ATEXp_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
-        #filename['ATEXp_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXp_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXp_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXp_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        '''
+        
+        #---------------------New ATEXp cases -----------------------------
+        filename['ATEXp_120_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_140_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_160_b0p860_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/results/b0p860/ATEXp_dharma_013067_b0p860_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_120_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA120_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_140_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA140_SAA000_VAA000plus_NPH1e6.hdf5'
+        filename['ATEXp_160_b2p13_3D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/results/b2p13/ATEXp_dharma_013067_b2p13_MSCART_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
+        
+        filename['ATEXp_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXp_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
-        #filename['ATEXp_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_v2/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
         
         return filename[case]
     def rotate_1D_domain(self,):
