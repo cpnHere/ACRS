@@ -43,25 +43,48 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
         ---------------------------------------
         0p860  |  140  |  000  |   1  |  030  |
         2p13   |  140  |  000  |   2  |  030  |
-        0p860  |  120  |  000  |   3  |  030  |
         2p13   |  120  |  000  |   4  |  030  |
         ---------------------------------------
-        2p13   |  140  |  000  |   5  |  000  |
+        0p860  |  120  |  000  |   3  |  000  |
         0p860  |  140  |  000  |   6  |  000  |
+        0p860  |  160  |  000  |  19  |  000  |
+        2p13   |  120  |  000  |  20  |  000  |
+        2p13   |  140  |  000  |   5  |  000  |
+        2p13   |  160  |  000  |  21  |  000  |
+        
+        +++++++++++++++++++++++++++++++++++++++
+        RICO
+        +++++++++++++++++++++++++++++++++++++++
+        ---------------------------------------
+        0p860  |  120  |  000  |  23  |  000  |
+        0p860  |  140  |  000  |   9  |  000  |
+        0p860  |  160  |  000  |  23  |  000  |
+        2p13   |  120  |  000  |  24  |  000  |
+        2p13   |  140  |  000  |  25  |  000  |
+        2p13   |  160  |  000  |  26  |  000  |
+        
         +++++++++++++++++++++++++++++++++++++++
         ATEXc
         +++++++++++++++++++++++++++++++++++++++
         ---------------------------------------
         0p860  |  120  |  000  |   7  |  000  |
         0p860  |  140  |  000  |  10  |  000  |
+        0p860  |  160  |  000  |  12  |  000  |
         2p13   |  120  |  000  |   8  |  000  |
         2p13   |  140  |  000  |  11  |  000  |
+        2p13   |  160  |  000  |  22  |  000  |
         
         +++++++++++++++++++++++++++++++++++++++
-        RICO
+        ATEXp
         +++++++++++++++++++++++++++++++++++++++
         ---------------------------------------
-        0p860  |  140  |  000  |   9  |  000  |
+        0p860  |  120  |  000  |   13  |  000  |
+        0p860  |  140  |  000  |   14  |  000  |
+        0p860  |  160  |  000  |   15  |  000  |*not finalized
+        2p13   |  120  |  000  |   16  |  000  |
+        2p13   |  140  |  000  |   17  |  000  |
+        2p13   |  160  |  000  |   18  |  000  |
+        
     RTdim: '1D' or '3D' RT transfer string
     '''
     VC={1:{'vIR':np.linspace(0   ,1,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.1,50) ,\
@@ -72,9 +95,9 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
            'vIe':np.linspace(0.75,2.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,2,20),\
            'cIR':np.arange(0.1,0.31,0.1)  ,'cQR':np.arange(-.02,0.001,0.01),'cUR':np.arange(0.02,0.031,0.005),\
            'cIe':np.arange(0.75,2.1,0.25) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,2.1,0.5)},\
-        3:{'vIR':np.linspace(0.2 ,0.8,50) ,'vQR':np.linspace(-.01,0,50)    ,'vUR':np.linspace(-0.05,0.05,50) ,\
+        3:{'vIR':np.linspace(0.2 ,0.8,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(-0.05,0.05,50) ,\
            'vIe':np.linspace(0.0,1.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
-           'cIR':np.arange(0.2,0.81,0.2)  ,'cQR':np.arange(-.01,.001,0.005),'cUR':np.arange(-0.05,0.051,0.05),\
+           'cIR':np.arange(0.2,0.81,0.2)  ,'cQR':np.arange(-.05,.001,0.025),'cUR':np.arange(-0.05,0.051,0.05),\
            'cIe':np.arange(0.0,1.1,0.5) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
         4:{'vIR':np.linspace(0.1 ,0.3,50) ,'vQR':np.linspace(-.005,0,50)   ,'vUR':np.linspace(-0.05,0.05,50) ,\
            'vIe':np.linspace(0.0,1.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,2,20),\
@@ -92,9 +115,9 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
            'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
            'cIR':np.arange(0.2,0.81,0.2)  ,'cQR':np.arange(-.01,.001,0.005),'cUR':np.arange(0.0,0.021,0.010),\
            'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
-        8:{'vIR':np.linspace(0.0 ,0.4,50) ,'vQR':np.linspace(-.01,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+        8:{'vIR':np.linspace(0.0 ,0.3,50) ,'vQR':np.linspace(-.01,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
            'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
-           'cIR':np.arange(0.0,0.41,0.1)  ,'cQR':np.arange(-.01,.001,0.005),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIR':np.arange(0.0,0.31,0.1)  ,'cQR':np.arange(-.01,.001,0.005),'cUR':np.arange(0.0,0.021,0.010),\
            'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
         9:{'vIR':np.linspace(0.0 ,1.0,50) ,'vQR':np.linspace(-.1,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
            'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
@@ -107,7 +130,67 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
         11:{'vIR':np.linspace(0.0 ,0.5,50) ,'vQR':np.linspace(-.05,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
             'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,0.5,20)     ,'vUe':np.linspace(0.0,5,20),\
             'cIR':np.arange(0.0,5.51,0.25)  ,'cQR':np.arange(-.05,0.01,0.025),'cUR':np.arange(-0.01,0.011,0.010),\
-            'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,0.51,0.25)      ,'cUe':np.arange(0,5.1,2.5)}
+            'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,0.51,0.25)      ,'cUe':np.arange(0,5.1,2.5)},\
+        12:{'vIR':np.linspace(0.2 ,0.8,50) ,'vQR':np.linspace(-.005,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+           'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.2,0.81,0.2)  ,'cQR':np.arange(-.005,.001,0.0025),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
+        13:{'vIR':np.linspace(0.0 ,1.0,50) ,'vQR':np.linspace(-.02,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+           'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,1.1,0.5)  ,'cQR':np.arange(-.02,.01,0.01),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
+        14:{'vIR':np.linspace(0.0 ,1.0,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+           'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,1.1,0.5)  ,'cQR':np.arange(-.05,.01,0.025),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
+        15:{'vIR':np.linspace(0.0 ,1.0,50) ,'vQR':np.linspace(-.01,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+           'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,1.1,0.5)  ,'cQR':np.arange(-.01,.01,0.005),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
+        16:{'vIR':np.linspace(0.0 ,0.6,50) ,'vQR':np.linspace(-.01,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+           'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,0.61,0.2)  ,'cQR':np.arange(-.01,.01,0.005),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
+        17:{'vIR':np.linspace(0.0 ,0.6,50) ,'vQR':np.linspace(-.1,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+           'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,0.61,0.2)  ,'cQR':np.arange(-.1,.01,0.05),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,1)},\
+        18:{'vIR':np.linspace(0.0 ,0.6,50) ,'vQR':np.linspace(-.01,0,50)    ,'vUR':np.linspace(0.0,0.02,50) ,\
+           'vIe':np.linspace(0.0,5.00,20),'vQe':np.linspace(0,10.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,0.61,0.2)  ,'cQR':np.arange(-.01,.01,0.005),'cUR':np.arange(0.0,0.021,0.010),\
+           'cIe':np.arange(0,5.1,1) ,'cQe':np.arange(0,10.1,2)      ,'cUe':np.arange(0,5.1,1)},\
+        19:{'vIR':np.linspace(0.2 ,0.82,50) ,'vQR':np.linspace(-.01,0,50) ,'vUR':np.linspace(-0.05,0.05,50) ,\
+           'vIe':np.linspace(0.0,1.00,20),'vQe':np.linspace(0,1.0,20)  ,'vUe':np.linspace(0.0,2,20),\
+           'cIR':np.arange(0.2,0.82,0.2)  ,'cQR':np.arange(-.01,.01,.005),'cUR':np.arange(-0.05,0.051,0.05),\
+           'cIe':np.arange(0.0,1.1,0.5) ,'cQe':np.arange(0,1.1,0.5)   ,'cUe':np.arange(0,2.1,0.5)},\
+        20:{'vIR':np.linspace(0.2 ,0.3,50) ,'vQR':np.linspace(-.01,0,50) ,'vUR':np.linspace(-0.05,0.05,50) ,\
+           'vIe':np.linspace(0.0,1.00,20),'vQe':np.linspace(0,1.0,20)  ,'vUe':np.linspace(0.0,2,20),\
+           'cIR':np.arange(0.2,0.31,0.05)  ,'cQR':np.arange(-.01,.01,.005),'cUR':np.arange(-0.05,0.051,0.05),\
+           'cIe':np.arange(0.0,1.1,0.5) ,'cQe':np.arange(0,1.1,0.5)   ,'cUe':np.arange(0,2.1,0.5)},\
+        21:{'vIR':np.linspace(0.2 ,0.3,50) ,'vQR':np.linspace(-.01,0,50) ,'vUR':np.linspace(-0.05,0.05,50) ,\
+           'vIe':np.linspace(0.0,1.00,20),'vQe':np.linspace(0,10.0,20)  ,'vUe':np.linspace(0.0,2,20),\
+           'cIR':np.arange(0.2,0.31,0.05)  ,'cQR':np.arange(-.01,.01,.005),'cUR':np.arange(-0.05,0.051,0.05),\
+           'cIe':np.arange(0.0,1.1,0.5) ,'cQe':np.arange(0,10.1,2)   ,'cUe':np.arange(0,2.1,0.5)},\
+        22:{'vIR':np.linspace(0.0 ,0.3,50) ,'vQR':np.linspace(-.01,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
+            'vIe':np.linspace(0.0,1.00,20),'vQe':np.linspace(0,10.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+            'cIR':np.arange(0.0,0.31,0.1)  ,'cQR':np.arange(-.01,0.01,0.005),'cUR':np.arange(-0.01,0.011,0.010),\
+            'cIe':np.arange(0,1.1,0.5) ,'cQe':np.arange(0,10.1,2)      ,'cUe':np.arange(0,5.1,2.5)},\
+        23:{'vIR':np.linspace(0.0 ,1.0,50) ,'vQR':np.linspace(-.01,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
+           'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,1.1,0.5)  ,'cQR':np.arange(-.01,0.01,0.005),'cUR':np.arange(-0.01,0.011,0.010),\
+           'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,2.5)},\
+        24:{'vIR':np.linspace(0.0 ,0.5,50) ,'vQR':np.linspace(-.01,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
+           'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,0.51,0.25)  ,'cQR':np.arange(-.01,0.01,0.005),'cUR':np.arange(-0.01,0.011,0.010),\
+           'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,2.5)},\
+        25:{'vIR':np.linspace(0.0 ,0.5,50) ,'vQR':np.linspace(-.1,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
+           'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,0.51,0.25)  ,'cQR':np.arange(-.1,0.01,0.05),'cUR':np.arange(-0.01,0.011,0.010),\
+           'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,2.5)},\
+        26:{'vIR':np.linspace(0.0 ,0.3,50) ,'vQR':np.linspace(-.01,0.0,50)    ,'vUR':np.linspace(-0.01,0.01,50) ,\
+           'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
+           'cIR':np.arange(0.0,0.31,0.1)  ,'cQR':np.arange(-.01,0.01,0.005),'cUR':np.arange(-0.01,0.011,0.010),\
+           'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,2.5)}
         }        
     if VZA==0:
         VZAi=61
