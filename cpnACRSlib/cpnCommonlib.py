@@ -16,7 +16,7 @@ import os,string
 import scipy.signal as signal
 import scipy.optimize as opt
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
-import pickle
+import pickle, sys
 import mpl_toolkits.basemap as bm
 import matplotlib as mp
 
@@ -24,18 +24,18 @@ class pkl_classes(object):
     def __init__(self,):
         self.class_names=[]
 # Disable
-def blockPrint():
+def blockPrint(_sys):
     '''
     To block printing text 
     '''
-    sys.stdout = open(os.devnull, 'w')
+    _sys.stdout = open(os.devnull, 'w')
 
 # Restore
-def enablePrint():
+def enablePrint(_sys):
     '''
     To enable printing text
     '''
-    sys.stdout = sys.__stdout__
+    _sys.stdout = _sys.__stdout__
 def fit_a_curve(xdata,ydata,label1='Data',label2='Fit',fig=None,ax=None):
     '''
     Do non-linear fit for x and y data.
