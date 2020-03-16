@@ -448,10 +448,12 @@ class POLCARTdset(object):
         RT_dim: '2D' or '1D'
         '''
         newMPRad=np.zeros_like(self.MeanPRad,dtype=float)
+        newMRMSE=np.zeros_like(self.MeanPRad,dtype=float)
         for i in np.arange(0,self.VZA.size):
             for l in np.arange(0,4):
                 newMPRad[i,:,:,l]=movingaverage2D(self.MeanPRad[i,:,:,l],window=ftr)
-        return newMPRad
+                newMRMSE[i,:,:,l]=np.sqrt(movingaverage2D((self.RMSEPRad[i,:,:,l])**2,window=ftr))
+        return newMPRad,newMRMSE
     def set_ScatA(self,):
         mn_view_the=np.min(np.abs(self.VZA))
         mx_view_the=np.max(np.abs(self.VZA))
