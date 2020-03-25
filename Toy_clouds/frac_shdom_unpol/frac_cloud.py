@@ -324,7 +324,7 @@ def setProp(scat_file, wavelength,fc_obj):
         for k in range(nz):
             nk=int(cthv[i]/(z1-z0)*nz) #cloud grid vertical #1km->20, 0.5km->10
             if(k==nk):
-                extinct=nz*extv[i]/nk/(z1-z0) #/nk, no need vertical is 1km
+                extinct=extv[i]/0.1 #/nk, no need vertical is 1km
                 albd=albedov[iphase-1]
             else:
                 extinct=0
