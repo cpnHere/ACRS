@@ -238,7 +238,7 @@ def readSHDOMRad(filename,hl=19,nx=4096):
     VZA = np.rad2deg(np.arccos([muphi1[0],muphi2[0]]))
     Rad = np.array([rad1[:,2],rad2[:,2]])
     return Rad,VZA,VAA,SZA,SAA
-def setProp(scat_file, wavelength,fc_obj):
+def setProp(scat_file, wavelength,fc_obj,nx=4096):
     '''
     scat_file = 'wcld_b0.86_re12.scat'
     fc_obj = frac_cloud.frac_physics
@@ -251,7 +251,6 @@ def setProp(scat_file, wavelength,fc_obj):
     cth1 = np.zeros_like(fc.re,dtype=float)+0.5  #convert into km
     
     #create lookup table
-    nx=4096
     ny=1
     print(nx, ny)
     #nz=20 #1.0/20=50meters

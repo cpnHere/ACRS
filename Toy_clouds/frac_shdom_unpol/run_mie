@@ -18,7 +18,7 @@ set scattable=<NAME>
 
 
 set distflag=G                   # G=gamma, L=lognormal size distribution
-set alpha = 17.0
+set alpha=<ALPHA>
 set Nretab=1                     # number of effective radius in table
 set Sretab=$re; set Eretab=$re     # starting, ending effective radius (micron)
 set maxradius=50                 # maximum radius in distribution (micron)
