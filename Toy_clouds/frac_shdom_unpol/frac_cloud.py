@@ -8,7 +8,9 @@ Chamara Rajapakshe
 (cpn.here@umbc.edu)
 ********************************************
 - Fractal cloud generation
-- Reading SHDOM Radiance output for fractal cloud 
+- readSHDOMRad() reads SHDOM Radiance output for fractal cloud 
+- setProp() writes *.prp files for SHDOM
+
 """
 import numpy as np
 import matplotlib.pyplot as plt
