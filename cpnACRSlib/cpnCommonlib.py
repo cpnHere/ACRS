@@ -78,7 +78,7 @@ def movingaverage2D(values,window):
     window: (intiger) Dimension of a side of the moving average window. (ex. 3 for 3by3 moving average)
     '''    
     weights = np.ones((window,window),dtype=float)/window/window
-    sma = signal.convolve2d(values, weights, 'same')
+    sma = signal.convolve2d(values, weights, mode='same',boundary='wrap')
     return sma
     
 def find_CDF(data,bins=None):
