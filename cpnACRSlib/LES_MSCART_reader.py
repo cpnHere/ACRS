@@ -26,13 +26,9 @@ def iqu_cb(fig,ctf,ax,ticks=None,orientation='horizontal',label='label',pad=0.2)
         fig.colorbar(ctf, cax=cax,orientation=orientation,label=label)
     else:
         fig.colorbar(ctf, cax=cax,ticks=ticks,orientation=orientation,label=label)
-def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS2'): 
+def get_rt_vc(vci):
     '''
-    vc: dictionary to define v and colorbars for contoursf
-        vc={'vIR':np.linspace(0   ,1,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.1,50) ,\
-           'vIe':np.linspace(0.0,2.0,20),'vQe':np.linspace(0.0,1.00,20)  ,'vUe':np.linspace(0.0,1.0,20),\
-           'cIR':np.arange(0,1.1,0.25)  ,'cQR':np.arange(-.05,0.011,0.02),'cUR':np.arange(0.0,0.11,0.05),\
-           'cIe':np.arange(0.0,2.1,0.5) ,'cQe':np.arange(0.0,1.1,0.5)    ,'cUe':np.arange(0.0,1.1,0.5)},
+    For RT radiance 2D histogram plots
     vci: Give index (ix) as the following table
         Contourf color bars and v (VC)
         +++++++++++++++++++++++++++++++++++++++
@@ -83,9 +79,7 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
         0p860  |  160  |  000  |   15  |  000  |*not finalized
         2p13   |  120  |  000  |   16  |  000  |
         2p13   |  140  |  000  |   17  |  000  |
-        2p13   |  160  |  000  |   18  |  000  |
-        
-    RTdim: '1D' or '3D' RT transfer string
+        2p13   |  160  |  000  |   18  |  000  |    
     '''
     VC={1:{'vIR':np.linspace(0   ,1,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.1,50) ,\
            'vIe':np.linspace(0.0,2.0,20),'vQe':np.linspace(0.0,1.00,20)  ,'vUe':np.linspace(0.0,1.0,20),\
@@ -191,13 +185,25 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
            'vIe':np.linspace(0.0,3.00,20),'vQe':np.linspace(0,1.0,20)     ,'vUe':np.linspace(0.0,5,20),\
            'cIR':np.arange(0.0,0.31,0.1)  ,'cQR':np.arange(-.01,0.01,0.005),'cUR':np.arange(-0.01,0.011,0.010),\
            'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,2.5)}
-        }        
+        }      
+    return VC[vci]
+def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS2'): 
+    '''
+    vc: dictionary to define v and colorbars for contoursf
+        vc={'vIR':np.linspace(0   ,1,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.1,50) ,\
+           'vIe':np.linspace(0.0,2.0,20),'vQe':np.linspace(0.0,1.00,20)  ,'vUe':np.linspace(0.0,1.0,20),\
+           'cIR':np.arange(0,1.1,0.25)  ,'cQR':np.arange(-.05,0.011,0.02),'cUR':np.arange(0.0,0.11,0.05),\
+           'cIe':np.arange(0.0,2.1,0.5) ,'cQe':np.arange(0.0,1.1,0.5)    ,'cUe':np.arange(0.0,1.1,0.5)},
+        
+    RTdim: '1D' or '3D' RT transfer string
+    '''
+
     if VZA==0:
         VZAi=61
     if vc==None and vci==None:
         print('Give either vc or vci')
     elif not(vci==None):
-        vc=VC[vci]
+        vc=get_rt_vc(vci)
     else:
         print('vc given explicitly')
     fig1,ax1=plt.subplots(2,3,figsize=(8,6),subplot_kw={'aspect':'equal'})
