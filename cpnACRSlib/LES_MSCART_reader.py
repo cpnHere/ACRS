@@ -187,7 +187,7 @@ def get_rt_vc(vci):
            'cIe':np.arange(0,3.1,1) ,'cQe':np.arange(0,1.1,0.5)      ,'cUe':np.arange(0,5.1,2.5)}
         }      
     return VC[vci]
-def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS2'): 
+def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS2',xonlyIDX=False): 
     '''
     vc: dictionary to define v and colorbars for contoursf
         vc={'vIR':np.linspace(0   ,1,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.1,50) ,\
@@ -196,6 +196,7 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
            'cIe':np.arange(0.0,2.1,0.5) ,'cQe':np.arange(0.0,1.1,0.5)    ,'cUe':np.arange(0.0,1.1,0.5)},
         
     RTdim: '1D' or '3D' RT transfer string
+    xonlyIDX=True: if x-y axises should be only "pixel indices" not distance in km
     '''
 
     if VZA==0:
@@ -209,9 +210,9 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
     fig1,ax1=plt.subplots(2,3,figsize=(8,6),subplot_kw={'aspect':'equal'})
 
     if RTdim=='3D':
-        ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl=iqu_LEScase_3D(fig1,case,ax1,VZAi,vc,case_name=case_name)
+        ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl=iqu_LEScase_3D(fig1,case,ax1,VZAi,vc,case_name=case_name,xonlyIDX=xonlyIDX)
     elif RTdim=='1D':
-        ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl=iqu_LEScase_1D(fig1,case,ax1,VZAi,vc,case_name=case_name)
+        ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl=iqu_LEScase_1D(fig1,case,ax1,VZAi,vc,case_name=case_name,xonlyIDX=xonlyIDX)
     ax1[0,1].tick_params(labelleft=False)
     ax1[0,2].tick_params(labelleft=False)
     ax1[1,1].tick_params(labelleft=False)
@@ -236,27 +237,50 @@ def iqu_DYCOMS2(case,VZA=0,SZA=140,vci=None,vc=None,RTdim='3D',case_name='DYCOMS
     
     return fig1,fig1_ttl,vc
     
-def iqu_LEScase_3D(fig1,case,ax1,VZAi,vc,case_name="DYCOMS2"):
+def iqu_LEScase_3D(fig1,case,ax1,VZAi,vc,case_name="DYCOMS2",xonlyIDX=False):
+    '''
+    xonlyIDX=True: if x-y axises should be only "pixel indices" not distance in km
+    '''
     cmap=plt.cm.jet
     cmap.set_bad(color='gray')
-    fig1_ttl=case.RT.fname.split('.',1)[0]+'_'+case_name+'_IQU_top_RMSE_bot'    
-    ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
-    ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
-    ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
-    cteI=ax1[1,0].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,0]/case.RT.MeanPRad[VZAi,:,:,0]*100,vc['vIe'],cmap=cmap,extend='both')
-    cteQ=ax1[1,1].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,1]/case.RT.MeanPRad[VZAi,:,:,1]*100,vc['vQe'],cmap=cmap,extend='both')
-    cteU=ax1[1,2].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,2]/case.RT.MeanPRad[VZAi,:,:,2]*100,vc['vUe'],cmap=cmap,extend='both')
+    fig1_ttl=case.RT.fname.split('.',1)[0]+'_'+case_name+'_IQU_top_RMSE_bot'
+    if xonlyIDX:    
+        ctfI=ax1[0,0].contourf(case.RT.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
+        ctfQ=ax1[0,1].contourf(case.RT.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
+        ctfU=ax1[0,2].contourf(case.RT.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
+        cteI=ax1[1,0].contourf(case.RT.RMSEPRad[VZAi,:,:,0]/case.RT.MeanPRad[VZAi,:,:,0]*100,vc['vIe'],cmap=cmap,extend='both')
+        cteQ=ax1[1,1].contourf(case.RT.RMSEPRad[VZAi,:,:,1]/case.RT.MeanPRad[VZAi,:,:,1]*100,vc['vQe'],cmap=cmap,extend='both')
+        cteU=ax1[1,2].contourf(case.RT.RMSEPRad[VZAi,:,:,2]/case.RT.MeanPRad[VZAi,:,:,2]*100,vc['vUe'],cmap=cmap,extend='both')
+    else:
+        ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
+        ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
+        ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
+        cteI=ax1[1,0].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,0]/case.RT.MeanPRad[VZAi,:,:,0]*100,vc['vIe'],cmap=cmap,extend='both')
+        cteQ=ax1[1,1].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,1]/case.RT.MeanPRad[VZAi,:,:,1]*100,vc['vQe'],cmap=cmap,extend='both')
+        cteU=ax1[1,2].contourf(case.xcens,case.ycens,case.RT.RMSEPRad[VZAi,:,:,2]/case.RT.MeanPRad[VZAi,:,:,2]*100,vc['vUe'],cmap=cmap,extend='both')
+    
     return ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl
-def iqu_LEScase_1D(fig1,case,ax1,VZAi,vc,case_name="DYCOMS2"):    
+def iqu_LEScase_1D(fig1,case,ax1,VZAi,vc,case_name="DYCOMS2",xonlyIDX=False):
+    '''
+    xonlyIDX=True: if x-y axises should be only "pixel indices" not distance in km
+    '''    
     cmap=plt.cm.jet
     cmap.set_bad(color='gray')
     fig1_ttl=case.RT1D.fname.split('.',1)[0]+'_'+case_name+'_IQU_top_RMSE_bot'
-    ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
-    ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
-    ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
-    cteI=ax1[1,0].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,0]/case.RT1D.MeanPRad[VZAi,:,:,0]*100),vc['vIe'],cmap=cmap,extend='both')
-    cteQ=ax1[1,1].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,1]/case.RT1D.MeanPRad[VZAi,:,:,1]*100),vc['vQe'],cmap=cmap,extend='both')
-    cteU=ax1[1,2].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,2]/case.RT1D.MeanPRad[VZAi,:,:,2]*100),vc['vUe'],cmap=cmap,extend='both')
+    if xonlyIDX:
+        ctfI=ax1[0,0].contourf(case.RT1D.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
+        ctfQ=ax1[0,1].contourf(case.RT1D.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
+        ctfU=ax1[0,2].contourf(case.RT1D.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
+        cteI=ax1[1,0].contourf((case.RT1D.RMSEPRad[VZAi,:,:,0]/case.RT1D.MeanPRad[VZAi,:,:,0]*100),vc['vIe'],cmap=cmap,extend='both')
+        cteQ=ax1[1,1].contourf((case.RT1D.RMSEPRad[VZAi,:,:,1]/case.RT1D.MeanPRad[VZAi,:,:,1]*100),vc['vQe'],cmap=cmap,extend='both')
+        cteU=ax1[1,2].contourf((case.RT1D.RMSEPRad[VZAi,:,:,2]/case.RT1D.MeanPRad[VZAi,:,:,2]*100),vc['vUe'],cmap=cmap,extend='both')
+    else:
+        ctfI=ax1[0,0].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,0],vc['vIR'],cmap=cmap,extend='both')
+        ctfQ=ax1[0,1].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,1],vc['vQR'],cmap=cmap,extend='both')
+        ctfU=ax1[0,2].contourf(case.xcens,case.ycens,case.RT1D.MeanPRad[VZAi,:,:,2],vc['vUR'],cmap=cmap,extend='both')
+        cteI=ax1[1,0].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,0]/case.RT1D.MeanPRad[VZAi,:,:,0]*100),vc['vIe'],cmap=cmap,extend='both')
+        cteQ=ax1[1,1].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,1]/case.RT1D.MeanPRad[VZAi,:,:,1]*100),vc['vQe'],cmap=cmap,extend='both')
+        cteU=ax1[1,2].contourf(case.xcens,case.ycens,(case.RT1D.RMSEPRad[VZAi,:,:,2]/case.RT1D.MeanPRad[VZAi,:,:,2]*100),vc['vUe'],cmap=cmap,extend='both')
     return ctfI,ctfQ,ctfU,cteI,cteQ,cteU,fig1_ttl
 def DYCOMS2_3D_1D_bias(case,VZA,SZA,vci):
     '''
