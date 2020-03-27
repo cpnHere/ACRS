@@ -385,7 +385,7 @@ class POLCARTdset(object):
             self.hdfpath=dpath
         self.cc3D=f['File_stamp/cc3D'].value
         self.dset=f['File_stamp/dset'].value
-        self.fname=f['File_stamp/fname'].value
+        self.fname=f.filename.split('.',1)[0]
         self.nmldpath=f['File_stamp/nmldpath'].value
         self.MeanPRad=f['MeanPRad'][:]
         self.MeanTiming=f['MeanTiming'][0]
@@ -765,16 +765,16 @@ class LES_case(object):
         case name ex. DYCOMS2_120_b0p860, filenameExp=False
         filename +path ex. name=['path_and_filename_3d','path_and_filename_1d'], filenameExp=True
     '''
-    def __init__(self,name,filenameExp=False,readfiles=True):
-        self.rotate1D='not_done'
+    def __init__(self,name,filenameExp=False,readfiles=True,res=None,rotate1D='not_done'):
+        self.rotate1D=rotate1D
         self.cloud_mask='not_done'
         self.name = name
         if filenameExp:
             fname_3d=name[0]
             fname_1D=name[1]
         else:
-            fname_3d=self.get_file_name(name+'_3D')
-            fname_1D=self.get_file_name(name+'_1D')
+            fname_3d=self.get_file_name(name+'_3D',res)
+            fname_1D=self.get_file_name(name+'_1D',res)
         self.band=fname_3d.split('results/',1)[1].split('/',1)[0]
         if readfiles:
             #3D RT
@@ -837,8 +837,9 @@ class LES_case(object):
             self.RT1D.fname=self.RT1D.fname[0].astype(str)
         self.RT.remove_redundant_nadir()
         self.RT1D.remove_redundant_nadir()
-    def get_file_name(self,case):
+    def get_file_name(self,case,res=None):
         '''
+        res: Resolution ex.'0p5km'. None for native.
         Return the appropriate file name
         When a new run was done, change the filename here. Hopefully, the others will manage it.
         '''
@@ -927,12 +928,16 @@ class LES_case(object):
         
         filename['ATEXp_120_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXp_140_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
-        filename['ATEXp_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e5.hdf5'
+        filename['ATEXp_160_b0p860_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb0p860_bins/ATEXp_dharma_013067_b0p860_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
         filename['ATEXp_120_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA120_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXp_140_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA140_SAA000_VAA000plus_NPH1e5.hdf5'
         filename['ATEXp_160_b2p13_1D']='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/ATEXp/1Druns/results/LESb2p13_bins/ATEXp_dharma_013067_b2p13_MSCART_1D_bins_SZA160_SAA000_VAA000plus_NPH1e6.hdf5'
         
-        return filename[case]
+        if res is None:
+            rname = filename[case]
+        else:
+            rname = filename[case].replace('.hdf5','_'+res+'.hdf5')
+        return rname
     def rotate_1D_domain(self,):
         '''
         Transpose MeanPRad and RMSEPRad arrays of the 1D results to be matched with 3D
