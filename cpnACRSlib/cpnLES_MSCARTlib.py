@@ -385,7 +385,7 @@ class POLCARTdset(object):
             self.hdfpath=dpath
         self.cc3D=f['File_stamp/cc3D'].value
         self.dset=f['File_stamp/dset'].value
-        self.fname=f.filename.split('.',1)[0]
+        self.fname=(f.filename.split('.',1)[0]).rsplit('/',1)[-1]
         self.nmldpath=f['File_stamp/nmldpath'].value
         self.MeanPRad=f['MeanPRad'][:]
         self.MeanTiming=f['MeanTiming'][0]
