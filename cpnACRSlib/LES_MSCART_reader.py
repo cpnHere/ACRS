@@ -26,8 +26,10 @@ def iqu_cb(fig,ctf,ax,ticks=None,orientation='horizontal',label='label',pad=0.2)
         fig.colorbar(ctf, cax=cax,orientation=orientation,label=label)
     else:
         fig.colorbar(ctf, cax=cax,ticks=ticks,orientation=orientation,label=label)
-def get_rt_vc(vci):
+def get_rt_vc(RT_case):
     '''
+    RT_case: 'DYCOMS2_120_b0p860'
+    
     For RT radiance 2D histogram plots
     vci: Give index (ix) as the following table
         Contourf color bars and v (VC)
@@ -81,6 +83,11 @@ def get_rt_vc(vci):
         2p13   |  140  |  000  |   17  |  000  |
         2p13   |  160  |  000  |   18  |  000  |    
     '''
+    vci_lib = {'DYCOMS2_120_b0p860':3,'DYCOMS2_140_b0p860':6,'DYCOMS2_0p860':19,'DYCOMS2_120_b2p13':20,'DYCOMS2_140_b2p13':5,'DYCOMS2_160_b2p13':21,\
+               'RICO_120_b0p860':23,'RICO_140_b0p860':9,'RICO_160_b0p860':23,'RICO_120_b2p13':24,'RICO_140_b2p13':25,'RICO_160_b2p13':26,\
+               'ATEXc_120_b0p860':7,'ATEXc_140_b0p860':10,'ATEXc_160_b0p860':12,'ATEXc_120_b2p13':8,'ATEXc_140_b2p13':11,'ATEXc_160_b2p13':22,\
+               'ATEXp_120_b0p860':13,'ATEXp_140_b0p860':14,'ATEXp_160_b0p860':15,'ATEXp_120_b2p13':16,'ATEXp_140_b2p13':17,'ATEXp_160_b2p13':18}
+    vci = vci_lib[RT_case]
     VC={1:{'vIR':np.linspace(0   ,1,50) ,'vQR':np.linspace(-.05,0,50)    ,'vUR':np.linspace(0.0,0.1,50) ,\
            'vIe':np.linspace(0.0,2.0,20),'vQe':np.linspace(0.0,1.00,20)  ,'vUe':np.linspace(0.0,1.0,20),\
            'cIR':np.arange(0,1.1,0.25)  ,'cQR':np.arange(-.05,0.011,0.02),'cUR':np.arange(0.0,0.11,0.05),\
