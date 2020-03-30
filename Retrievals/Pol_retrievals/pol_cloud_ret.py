@@ -238,8 +238,8 @@ def getGuess(cname,method,rTyp,tail=None):
     '''
     abc=None
     if tail is None:
-        filename='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/Pol_retrievals/results/pol_ret_V5/'+\
-            cname+'_'+method+'_full_pol_ret_V5_MPI'
+        filename='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/Pol_retrievals/results/guess/'+\
+            cname+'_'+method+'_full_pol_ret_V7_MPI'
         data=cpn.load_obj(filename)
         abc   =data['abc']
         print('_full_pol_ret_V5_MPI results will be used to get the initial guess')
@@ -273,6 +273,9 @@ if __name__=='__main__':
     mpi=True and (rTyp=='full')               #To use MPI version
     case=str(sys.argv[7])
     pBow=True               #Use primary bow
+    resol=str(sys.argv[8])  # 'nt'=> native, others '0p5km', '1p0km' ...
+    if resol == 'nt':
+        resol = None
 
 #    band='0p860'
 #    sza=140 
@@ -295,13 +298,13 @@ if __name__=='__main__':
     if not(spRT):
         # Q observations from RT simulations
         if case=='DY':
-            LEScase=LES_case('DYCOMS2_'+str(sza)+'_b'+band)
+            LEScase=LES_case('DYCOMS2_'+str(sza)+'_b'+band,res=resol)
         elif case=='RC':
-            LEScase=LES_case('RICO_'+str(sza)+'_b'+band)
+            LEScase=LES_case('RICO_'+str(sza)+'_b'+band,res=resol)
         elif case=='AC':
-            LEScase=LES_case('ATEXc_'+str(sza)+'_b'+band)
+            LEScase=LES_case('ATEXc_'+str(sza)+'_b'+band,res=resol)
         elif case=='AP':
-            LEScase=LES_case('ATEXp_'+str(sza)+'_b'+band)
+            LEScase=LES_case('ATEXp_'+str(sza)+'_b'+band,res=resol)
             
                 
     '''
@@ -353,14 +356,14 @@ if __name__=='__main__':
         Q_in2= RT.MeanPRad[:,:,:,1]
     else:
         print('Error! Give valid rTyp!')
-    cname = LEScase.get_file_name(LEScase.name+'_'+dim).rsplit('/',1)[1].split('.',1)[0]
+    cname = LEScase.get_file_name(LEScase.name+'_'+dim,res=resol).rsplit('/',1)[1].split('.',1)[0]
     savename=cname+'_'+method+'_'+rTyp+tail
     print(savename+' will be saved')
 
     muV=np.cos(np.deg2rad(RT.VZA))
     muS=np.cos(np.deg2rad(180-RT.SZA))
     obsSca=RT.ScatA
-    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method,primaryBow=pBow)
+    P=Pmat(P12Lib.re,P12Lib.ve,P12Lib.bulk_Mie_ang,P12Lib.avP12['0p860'],obsSca,method=method,primaryBow=pBow,SZA=RT.SZA)
     #gemet=4*(muS+muV)*0+1#No geometric correction
     gemet=4*(muS+muV)
     #ygabc=getGuess(cname,method,rTyp,tail)#give tail to use domain mean ret. to get initial guess
