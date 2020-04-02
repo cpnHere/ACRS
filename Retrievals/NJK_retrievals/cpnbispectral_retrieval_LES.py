@@ -36,11 +36,14 @@ from textwrap import wrap
 from cpnLES_MSCARTlib import LES_case
 from cpnRetrievalslib import doNJK_LES, NJK_retrievals
 import cpnCommonlib as cpn
+import sys
 def savefig(fig,fig_ttl):
     cpn.savefig(fig,fig_ttl,'figures/')
 if __name__=='__main__':
-    cpn.setup_figures(plt)
-    sza='140'
+    cnm = str(sys.argv[1])
+    sza = str(sys.argv[2])
+    sdir = str(sys.argv[3])
+    #cpn.setup_figures(plt)
     vza=0
     #DYCOMS-II-----------------------------------------------------------------
     '''
@@ -74,18 +77,18 @@ if __name__=='__main__':
     '''
     #RICO-----------------------------------------------------------------
     #'''
-    DYC0p860_sza=LES_case('RICO_'+sza+'_b0p860')
-    DYC2p13_sza =LES_case('RICO_'+sza+'_b2p13')
+    DYC0p860_sza=LES_case(cnm+'_'+sza+'_b0p860')
+    DYC2p13_sza =LES_case(cnm+'_'+sza+'_b2p13')
     #'''
 
-    ret_save_dir='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/NJK_retrievals/data/'
+    ret_save_dir=sdir
 
     #New runs
     #'''
-    NJK_ret3D=doNJK_LES(DYC0p860_sza,DYC2p13_sza,sza,vza)
-    NJK_ret1D=doNJK_LES(DYC0p860_sza,DYC2p13_sza,sza,vza,RTdim='1D')
-    cpn.save_obj(NJK_ret3D,ret_save_dir+NJK_ret3D.NJK_case_name)
-    cpn.save_obj(NJK_ret1D,ret_save_dir+NJK_ret1D.NJK_case_name)
+    NJK_ret3D=doNJK_LES(DYC0p860_sza,DYC2p13_sza,sza,vza,check_DB=False)
+    NJK_ret1D=doNJK_LES(DYC0p860_sza,DYC2p13_sza,sza,vza,RTdim='1D',check_DB=False)
+    cpn.save_obj(NJK_ret3D,sdir+NJK_ret3D.NJK_case_name)
+    cpn.save_obj(NJK_ret1D,sdir+NJK_ret1D.NJK_case_name)
     #'''
     #Load previous runs
     '''
