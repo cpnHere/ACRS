@@ -766,7 +766,10 @@ class LES_case(object):
         filename +path ex. name=['path_and_filename_3d','path_and_filename_1d'], filenameExp=True
     '''
     def __init__(self,name,filenameExp=False,readfiles=True,res=None,rotate1D='not_done'):
-        self.rotate1D=rotate1D
+        if res is None:
+            self.rotate1D=rotate1D
+        else:
+            self.rotate1D='done' #aggregated RT results have been already rotated
         self.cloud_mask='not_done'
         self.name = name
         if filenameExp:
