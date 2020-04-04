@@ -43,6 +43,9 @@ if __name__=='__main__':
     cnm = str(sys.argv[1])
     sza = str(sys.argv[2])
     sdir = str(sys.argv[3])
+    res = str(sys.argv[4])
+    if res == 'None':
+        res = None
     #cpn.setup_figures(plt)
     vza=0
     #DYCOMS-II-----------------------------------------------------------------
@@ -77,8 +80,8 @@ if __name__=='__main__':
     '''
     #RICO-----------------------------------------------------------------
     #'''
-    DYC0p860_sza=LES_case(cnm+'_'+sza+'_b0p860')
-    DYC2p13_sza =LES_case(cnm+'_'+sza+'_b2p13')
+    DYC0p860_sza=LES_case(cnm+'_'+sza+'_b0p860',res=res)
+    DYC2p13_sza =LES_case(cnm+'_'+sza+'_b2p13',res=res)
     #'''
 
     ret_save_dir=sdir
