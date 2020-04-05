@@ -234,13 +234,13 @@ def doNJK_LES(LES_case_VNIR,LES_case_SWIR,sza,VZA,RTdim='3D',check_DB=True):
 
     obVZA_ix=LES_case_VNIR.RT.find_obVZA_ix(VZA)
     if RTdim=='3D':
-        RT865_file=LES_case_VNIR.get_file_name(LES_case_VNIR.name+'_3D')
-        RT2p13_file=LES_case_SWIR.get_file_name(LES_case_SWIR.name+'_3D')
+        RT865_file=LES_case_VNIR.get_file_name(LES_case_VNIR.name+'_3D',res=LES_case_VNIR.res)
+        RT2p13_file=LES_case_SWIR.get_file_name(LES_case_SWIR.name+'_3D',res=LES_case_SWIR.res)
         obs_SWIR_set=LES_case_SWIR.RT.MeanPRad[obVZA_ix,:,:,0]
         obs_VNIR_set=LES_case_VNIR.RT.MeanPRad[obVZA_ix,:,:,0]
     elif RTdim=='1D':
-        RT865_file=LES_case_VNIR.get_file_name(LES_case_VNIR.name+'_1D')
-        RT2p13_file=LES_case_SWIR.get_file_name(LES_case_SWIR.name+'_1D')
+        RT865_file=LES_case_VNIR.get_file_name(LES_case_VNIR.name+'_1D',res=LES_case_VNIR.res)
+        RT2p13_file=LES_case_SWIR.get_file_name(LES_case_SWIR.name+'_1D',res=LES_case_SWIR.res)
         obs_SWIR_set=LES_case_SWIR.RT1D.MeanPRad[obVZA_ix,:,:,0]
         obs_VNIR_set=LES_case_VNIR.RT1D.MeanPRad[obVZA_ix,:,:,0]
     Physics_file=LES_case_VNIR.RT_field.dpath+LES_case_VNIR.RT_field.fname
