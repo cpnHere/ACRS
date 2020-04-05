@@ -263,7 +263,7 @@ def savefig(fig,fig_ttl,path=None,rp=False):
     fig: Figure object matplotlib.figure.Figure
     fig_ttl: figure title string (some specila characterls will be removed from the file name)
     '''
-    for ch in [' ','[',']']:
+    for ch in [' ','[',']','=']:
         if ch in fig_ttl:
             fig_ttl=fig_ttl.replace(ch,'_')
     fig_ttl=fig_ttl.replace('.','p')
