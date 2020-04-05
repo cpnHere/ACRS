@@ -772,6 +772,7 @@ class LES_case(object):
             self.rotate1D='done' #aggregated RT results have been already rotated
         self.cloud_mask='not_done'
         self.name = name
+        self.res = res #resolution None for native, '0p45km' format for others
         if filenameExp:
             fname_3d=name[0]
             fname_1D=name[1]
