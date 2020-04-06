@@ -36,9 +36,10 @@ if __name__ == '__main__':
     
     #DYCOMS 50m native resolution
     #fctr = 2 # convolution domain factor
-    for fctr in [5,10,20,50]:
-        for sza in ['120','140','160']:
-            for band in ['0p860','2p13']:
-                c_label = 'RICO_'+sza+'_b'+band
+    #RICO factors [5,10,20,50]
+    for fctr in [2,10,20,100]:
+        for sza in ['160']:
+            for band in ['0p860']:
+                c_label = 'ATEXp_'+sza+'_b'+band
                 print(c_label)
                 aggregate_Rad(fctr,c_label)
