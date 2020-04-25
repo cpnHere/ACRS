@@ -609,6 +609,7 @@ class Pol_ret_P12Lib(object):
             print(wl+':%0.2f'%(bulk.Mie.wvl[wli[wl]]))
             self.avP12[wl]=avP12_x
         self.bulk_Mie_ang=bulk.Mie.ang
+        self.bulk_Mie=bulk
     def saveP12Lib(self,):
         if os.path.isfile(self.fname):
             inp=raw_input('File aready exist. Continue? y/n:')
