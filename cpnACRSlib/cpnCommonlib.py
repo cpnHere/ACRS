@@ -36,8 +36,9 @@ def enablePrint(_sys):
     To enable printing text
     '''
     _sys.stdout = _sys.__stdout__
-def fit_a_curve(xdata,ydata,label1='Data',label2='Fit',fig=None,ax=None):
+def fit_a_curve(xdata,ydata,label1='Data',label2='Fit',fig=None,ax=None,pltData=True):
     '''
+    pltData: False to only plot the fit
     Do non-linear fit for x and y data.
     '''
     if fig is None:
@@ -48,7 +49,8 @@ def fit_a_curve(xdata,ydata,label1='Data',label2='Fit',fig=None,ax=None):
         '''
         return a * np.exp(-b * x) + c
     # Plot the actual data
-    ax.plot(xdata, ydata, "k.", label=label1);
+    if pltData:
+        ax.plot(xdata, ydata, "k.", label=label1);
 
     # The actual curve fitting happens here
     optimizedParameters, pcov = opt.curve_fit(func, xdata, ydata);
