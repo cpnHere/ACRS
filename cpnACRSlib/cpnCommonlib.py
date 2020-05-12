@@ -89,12 +89,17 @@ def find_CDF(data,bins=None):
     data: 1D data array
     bins: bins for the histogram
     '''
+    data=data[~np.isnan(data)]#removing nans
+    if np.sum(np.isnan(data))>0:
+        print('Nan s ingnored!!')
     weights=np.ones_like(data)/len(data)
     if bins==None:
         val, base = np.histogram(data, weights=weights)
     else:
         val, base = np.histogram(data, bins=bins,weights=weights)
-    return base[1:], np.cumsum(val)
+    x=base[1:]
+    cdf=np.cumsum(val)
+    return x, cdf/cdf.max()
 
 def rmvxtrms(dM):
     '''
@@ -226,14 +231,14 @@ def setup_figures(plt):
     plt.rc('axes',titlesize=16,labelsize=17)
     plt.rc('mathtext',fontset='stix')
     
-def sub_labels(ax,clr='k',x=0.01,y=0.9):
+def sub_labels(ax,clr='k',x=0.01,y=0.9,size=15):
     '''
     Add subfigure labels
     '''
     axs=ax.flat
     for n, ax in enumerate(axs):
         ax.text(x, y, '('+string.ascii_lowercase[n]+')', transform=ax.transAxes,
-                size=15,color=clr)
+                size=size,color=clr)
         
 def add_common_cb(fig,ctf,ts=None,label=None):
     '''
