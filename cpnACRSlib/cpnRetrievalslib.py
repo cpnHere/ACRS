@@ -73,7 +73,7 @@ class Bispec_LUT(object):
             print('VZA:'+str(np.rad2deg(np.arccos(self.mu[mu_ix]))))
             mu_ix=input('Select VZA index:')
             return mu_ix
-    def plotLUT(self,VZA,re_lines=None,ve=0.02,figAx=None):
+    def plotLUT(self,VZA,re_lines=None,ve=0.02,figAx=None,gcolor='grey'):
         '''
         re_line: Array of re values that are needed to be shown on the LUT plot.
                 Make sure all the values are available in self.re
@@ -84,14 +84,14 @@ class Bispec_LUT(object):
         LUT_VNIR=self.I[0,:,np.where(self.ve==ve),:,mu_ix].T
         LUT_SWIR=self.I[1,:,np.where(self.ve==ve),:,mu_ix].T
         if re_lines is None:
-            fig_LUT,axLUT=plotLUT(LUT_VNIR,LUT_SWIR,self.re[:],self.tau,figAx=figAx)
+            fig_LUT,axLUT=plotLUT(LUT_VNIR,LUT_SWIR,self.re[:],self.tau,figAx=figAx,gcolor=gcolor)
         else:        
-            fig_LUT,axLUT=plotLUT(LUT_VNIR,LUT_SWIR,self.re,self.tau,re_lines=re_lines,figAx=figAx)
+            fig_LUT,axLUT=plotLUT(LUT_VNIR,LUT_SWIR,self.re,self.tau,re_lines=re_lines,figAx=figAx,gcolor=gcolor)
         axLUT.set_title(r'$\mu$=%0.3f : $\mu_0$=%0.3f : $\phi$=%0.1f : $v_e$=%0.2f'%(self.mu[mu_ix],self.mu0,self.phi,ve))
         return fig_LUT,axLUT
 
 
-def plotLUT(VNIR_lut,SWIR_lut,reff_lut,tau_lut,re_lines=None,figAx=None):
+def plotLUT(VNIR_lut,SWIR_lut,reff_lut,tau_lut,re_lines=None,figAx=None,gcolor='grey'):
     '''
     To plot LUT. fig and ax instances will be returned to over plot data.
     re_lines:  Array of re values that are needed to be shown on the LUT plot.
@@ -104,8 +104,8 @@ def plotLUT(VNIR_lut,SWIR_lut,reff_lut,tau_lut,re_lines=None,figAx=None):
     if re_lines is None:
         for i in np.arange(0,reff_lut.size,10):
             x=np.squeeze(VNIR_lut[i,:]);y=np.squeeze(SWIR_lut[i,:])
-            axLUT.plot(x,y,'k-',color='grey')
-            axLUT.text(x.max(),y.max(),' %d'%reff_lut[i],color='grey')
+            axLUT.plot(x,y,'k-',color=gcolor)
+            axLUT.text(x.max(),y.max(),' %d'%reff_lut[i],color=gcolor)
         re_min_ix=np.argmin(reff_lut)
     else:
         p=np.repeat(re_lines,reff_lut.size).reshape(re_lines.size,reff_lut.size)
@@ -113,22 +113,22 @@ def plotLUT(VNIR_lut,SWIR_lut,reff_lut,tau_lut,re_lines=None,figAx=None):
         re_ln_ix=np.where((p-q.T)==0)[1]
         for i in re_ln_ix:
             x=np.squeeze(VNIR_lut[i,:]);y=np.squeeze(SWIR_lut[i,:])
-            axLUT.plot(x,y,'k-',color='grey')
-            axLUT.text(x.max(),y.max(),' %d'%reff_lut[i],color='grey')
+            axLUT.plot(x,y,'k-',color=gcolor)
+            axLUT.text(x.max(),y.max(),' %d'%reff_lut[i],color=gcolor)
         re_min_ix=np.squeeze(np.argwhere(reff_lut==re_lines.min()))
     for j in np.arange(0,tau_lut.size,10):
         x=np.squeeze(VNIR_lut[re_min_ix:,j]);y=np.squeeze(SWIR_lut[re_min_ix:,j])
-        axLUT.plot(x,y,'k--',color='grey')
-        axLUT.text(x.min(),y.min()-0.02,r'%d'%tau_lut[j],color='grey')
+        axLUT.plot(x,y,'k--',color=gcolor)
+        axLUT.text(x.min(),y.min()-0.02,r'%d'%tau_lut[j],color=gcolor)
         axLUT.set_xlabel('VNIR Reflectance')
         axLUT.set_ylabel('SWIR Reflectance')
     axLUT.set_xlim(0,VNIR_lut.max()+0.2)
     axLUT.arrow(VNIR_lut.max()+.1,0.5,0.03,-0.4,linestyle='-',head_width=0.02,\
-              length_includes_head=True,color='grey')
-    axLUT.annotate(r' $r_e$($\mu m$)',xy=(VNIR_lut.max()+0.12,0.3),color='grey',rotation=90)
+              length_includes_head=True,color=gcolor)
+    axLUT.annotate(r' $r_e$($\mu m$)',xy=(VNIR_lut.max()+0.12,0.3),color=gcolor,rotation=90)
     axLUT.arrow(0.2,0.05,VNIR_lut.max()-0.3,0,linestyle='-',head_width=0.02,\
-              length_includes_head=True,color='grey')
-    axLUT.annotate(r' $\tau$',xy=(VNIR_lut.max()/2,0),color='grey')
+              length_includes_head=True,color=gcolor)
+    axLUT.annotate(r' $\tau$',xy=(VNIR_lut.max()/2,0),color=gcolor)
     fig_LUT.show()
     return fig_LUT,axLUT
 
