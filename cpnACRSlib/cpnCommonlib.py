@@ -419,3 +419,14 @@ def multiple_ticks(ax_XY,major_step,minor_step=None,major_format='%0.1f'):
     else:
         ax_XY.set_minor_locator(AutoMinorLocator())
 
+def shade_quadrant(ax,q=[1,0,0,0]):
+    '''
+    Use after plotting all the data
+    q=[I,II,III,IV] quadrant. 1 to mask 0 to not
+    '''
+    arr=np.array([[q[1],q[0]],[q[2],q[3]]])
+    x0,x1=ax.get_xlim()
+    y0,y1=ax.get_ylim()
+    vmax = np.abs(np.array([x0,x1,y0,y1])).max() 
+    ax.autoscale(False)
+    ax.imshow(arr,extent=[vmax*-1,vmax, vmax*-1,vmax],cmap=plt.cm.Greys, interpolation='none', alpha=.2)
