@@ -614,7 +614,7 @@ class LES_field(object):
         ax1.set_xlabel('km')
         ax1.set_ylabel('km')
         fig1.show()
-        return fig1,fig1_ttl
+        return fig1,ax1,fig1_ttl
     def get_Tau(self,):
         Bex=self.extp3d#km^-1
         DZ=self.zgrd[1:]-self.zgrd[0:-1]#km
