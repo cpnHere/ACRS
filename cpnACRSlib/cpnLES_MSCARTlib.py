@@ -1386,8 +1386,8 @@ class DHARMA_onmp(object):
         fpath: Path to saved psudo retrieval hdf5 (default:/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_simulations/)
         See DHARMA_onmp.find_reVW for I/O help.
         '''
-        from vertical_weighting_psudo_ret import LES_psudo_rets
-        VW=LES_psudo_rets(self,mie_name,mie_path,dgSZA,dgVZA,a,b,band=band,replace=replace)
+        from cpnRetrievalslib import LES_pseudo_rets as LES_psudo_rets
+        VW=LES_psudo_rets(self,mie_name,mie_path,dgSZA,dgVZA,a,b,band=band,replace=replace,fpath=fpath)
         if VW.replace=='1':
             VW.Re,VW.Ve,VW.dN,VW.re_tau,VW.ve_tau,VW.w_tau,VW.tau,VW.Re_dN_vw,VW.Ve_dN_vw = self.find_reVW(mie_name,lesCname,dgSZA,dgVZA,a=a,b=b,mie_path=mie_path,band=band)  
             VW.Tau=VW.tau[0,:,:]
