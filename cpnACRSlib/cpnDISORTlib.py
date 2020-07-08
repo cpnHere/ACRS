@@ -47,7 +47,7 @@ def read_disort(filename='INTENSITY.dat',NUMU=90,NTAU=2,UMU0=0.4990000000000001,
     I = np.hstack((rawI[0:NUMU,2],np.flipud(rawI[0:NUMU,0])))
     SZA = np.zeros_like(I,dtype=float)+np.rad2deg(np.arccos(UMU0))
     SAA = np.zeros_like(I,dtype=float)+PHI0
-    srSZA = SZA
+    srSZA = 180-SZA
     srAA = PHI0 
     RAA = srAA-VAA
     ScatA = scat_ang(srSZA,VZA,RAA)
