@@ -282,6 +282,22 @@ def find_bows(ang,P11):
     sb=input('Select Supernumerarybow angle:')
     return pb,sb
 
+def scat_ang(SZA,VZA,RAA):
+    '''
+    Return the scattering angle in degrees
+    SZA,VZA : Source(ray)_Zenith_Angle, Viewing_Zenith_Angle (in degrees)
+    RAA : Source Azimuth Angle - (Apparent)Scattering Azimuth
+    '''
+#    RAA=0-180-RAA
+# scat_a=cos(VZA)*cos(SZA)+sin(VZA)*sin(SZA)*cos(SAA-VAA)
+    SZA=np.deg2rad(SZA);
+    VZA=np.deg2rad(VZA)
+    RAA=np.deg2rad(RAA)
+    
+    scat_a=np.arccos(np.cos(SZA)*np.cos(VZA)+np.sin(SZA)*np.sin(VZA)*np.cos(RAA))
+    scat_a=np.rad2deg(scat_a)
+    return scat_a
+
 if __name__=='__main__':
     f1d=frac_physics('Fractal_1D')
     f1d.generate_fractal(12,90.0,xdist=1.024,xorder=10)

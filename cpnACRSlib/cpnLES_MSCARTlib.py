@@ -53,6 +53,7 @@ from textwrap import wrap
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from cpnCommonlib import movingaverage2D
 from cpnMielib import MieSet
+from cpnMicropylib import scat_ang
 
 def add_cloud_mask(dict_atr,cldM,dictionary=False):
     '''
@@ -712,22 +713,6 @@ def collectColsMSCART(fname00,fdpath,dsNew,out_name):
             dsNew.MeanPRad[:,ds1D.pnt[0],ds1D.pnt[1],:]=ds1D.MeanPRad.T
             dsNew.RMSEPRad[:,ds1D.pnt[0],ds1D.pnt[1],:]=ds1D.RMSEPRad.T
     dsNew.savePOLCARThdf5(out_name)
-
-def scat_ang(SZA,VZA,RAA):
-    '''
-    Return the scattering angle in degrees
-    SZA,VZA : Source(ray)_Zenith_Angle, Viewing_Zenith_Angle (in degrees)
-    RAA : Source Azimuth Angle - (Apparent)Scattering Azimuth
-    '''
-#    RAA=0-180-RAA
-# scat_a=cos(VZA)*cos(SZA)+sin(VZA)*sin(SZA)*cos(SAA-VAA)
-    SZA=np.deg2rad(SZA);
-    VZA=np.deg2rad(VZA)
-    RAA=np.deg2rad(RAA)
-    
-    scat_a=np.arccos(np.cos(SZA)*np.cos(VZA)+np.sin(SZA)*np.sin(VZA)*np.cos(RAA))
-    scat_a=np.rad2deg(scat_a)
-    return scat_a
     
 def getKokhanovsky_PM(ac='aero'):
     '''
