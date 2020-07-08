@@ -80,7 +80,7 @@ REAL  TSTFIR( MXTAU, MXCASE, MXPROB ), &
 COMMON / DOCHEK / TSTFIR, TSTFDN, TSTFUP, TSTDFD, TSTUU
 REAL,DIMENSION(:),ALLOCATABLE     :: CMPFIR, CMPFDN, CMPFUP, CMPDFD
 REAL,DIMENSION(:,:,:),ALLOCATABLE :: CMPUU 
-REAL RVAL
+REAL COT,MU0
 
 real(kind=4),parameter :: PI = 2.*ASIN(1.0)
 INTEGER :: NTEST, NPASS
@@ -127,7 +127,8 @@ IF( DOPROB(17) ) THEN
    
   call allocate_disort_allocatable_arrays( NLYR, NMOM, NSTR, NUMU, NPHI, NTAU )
 
-  UMU0      = COS(PI/3)-0.001;  PHI0      = 0.0
+  CALL READ_VAL("inputFile.dat",COT,MU0)
+  UMU0      = MU0;  PHI0      = 0.0
   J = 1
   DO I = 89, 0, -1
     UMU( J ) = COS(I*PI/180.0)
@@ -136,8 +137,7 @@ IF( DOPROB(17) ) THEN
   PHI( 1 )  = 0.0; PHI( 2 )   = 90.0; PHI( 3 )   = 180.0
   ALBEDO    = 0.0
   CALL  GETMOM( 7, 0.0, NMOM, PMOM )
-  CALL READ_VAL("inputFile.dat",RVAL)
-  DTAUC( 1 ) = RVAL; SSALB( 1 ) = 1.0
+  DTAUC( 1 ) = COT; SSALB( 1 ) = 1.0
   UTAU( 1 ) = 0.0; UTAU( 2 )  = DTAUC(1)
   FBEAM      = 1.0; FISOT      = 0.0
   WRITE( TITLE, '(2A)' )'Test Case No. 17', ABC(ICAS)
