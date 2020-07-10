@@ -127,7 +127,7 @@ IF( DOPROB(17) ) THEN
    
   call allocate_disort_allocatable_arrays( NLYR, NMOM, NSTR, NUMU, NPHI, NTAU )
 
-  CALL READ_VAL("inputFile.dat",COT,MU0)
+  CALL READ_VAL("inputFile.dat",COT,MU0,PMOM)
   UMU0      = MU0;  PHI0      = 0.0
   J = 1
   DO I = 89, 0, -1
@@ -136,7 +136,7 @@ IF( DOPROB(17) ) THEN
   ENDDO
   PHI( 1 )  = 0.0; PHI( 2 )   = 90.0; PHI( 3 )   = 180.0
   ALBEDO    = 0.0
-  CALL  GETMOM( 7, 0.0, NMOM, PMOM )
+!c  CALL  GETMOM( 7, 0.0, NMOM, PMOM )
   DTAUC( 1 ) = COT; SSALB( 1 ) = 1.0
   UTAU( 1 ) = 0.0; UTAU( 2 )  = DTAUC(1)
   FBEAM      = 1.0; FISOT      = 0.0
