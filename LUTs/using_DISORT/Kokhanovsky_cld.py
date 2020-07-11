@@ -17,6 +17,9 @@ import os
 
 if __name__ == "__main__":
     
+    inP = './'
+    ouP = './results/'
+    
     Data = np.loadtxt('P11/Zhibo_P11/Kokhanovsky_benchmark_cloud.PDA',skiprows=6)
     re = 1 #um
     ve = 0.3
@@ -51,5 +54,5 @@ if __name__ == "__main__":
     print("jobid: "+jobid.replace('.','p'))
     
     #Executing DISORT
-    os.system('./disort_driver.sh Kokhanovsky_ve0p3re1p0COT5p0MU00p5000')
+    os.system('./disort_driver.sh '+jobid.replace('.','p')+' '+inP+' '+ouP)
     
