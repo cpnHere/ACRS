@@ -123,7 +123,7 @@ IF( DOPROB(17) ) THEN
   ICAS = 2
 
        
-  NMOM = 900
+  NMOM = 500
    
   call allocate_disort_allocatable_arrays( NLYR, NMOM, NSTR, NUMU, NPHI, NTAU )
 

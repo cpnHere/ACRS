@@ -3,11 +3,11 @@
       CHARACTER*(*)      FNAME
       REAL            COT, MU0
       INTEGER K
-      REAL, DIMENSION (900) :: PMOM
+      REAL, DIMENSION (500) :: PMOM
       OPEN ( 10, FILE=FNAME )
       READ ( 10, *) COT
       READ ( 10, *) MU0
-      DO  60  K = 1, 900
+      DO  60  K = 1, 500
          READ (10,*) PMOM(K)
 60    CONTINUE
       CLOSE(10)
