@@ -2,8 +2,8 @@
 # Chamara Rajapakshe (2020)
 # To run DISORT to generate LUTs
 #-----------------------------------
-#SBATCH --job-name=LUTorig
-#SBATCH --output=LUTorig.out
+#SBATCH --job-name=LUTHigh
+#SBATCH --output=LUTHigh.out
 #SBATCH --partition=batch
 #SBATCH --qos=long+
 #SBATCH --mem=5000
