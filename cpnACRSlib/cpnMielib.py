@@ -278,7 +278,7 @@ class bulk_Mie(object):
         avP12=np.zeros((self.Mie.ang.size,self.Mie.wvl.size))
         avP33=np.zeros((self.Mie.ang.size,self.Mie.wvl.size))
         avP34=np.zeros((self.Mie.ang.size,self.Mie.wvl.size))
-        print('Averaging for bulk Pmat........')
+        print('Computing bulk Pmat........')
         for k in range(0,self.Mie.wvl.size):
         #fb=r**2*qe.T*alb.T*n_r
             fb=self.psd.r**2*self.Mie.qe[:,k].T*self.Mie.alb[:,k].T*self.psd.n_N

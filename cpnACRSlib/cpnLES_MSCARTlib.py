@@ -53,7 +53,7 @@ from textwrap import wrap
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from cpnCommonlib import movingaverage2D
 from cpnMielib import MieSet
-from cpnMicropylib import scat_ang
+from cpnMicrophylib import scat_ang
 
 def add_cloud_mask(dict_atr,cldM,dictionary=False):
     '''
