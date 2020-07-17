@@ -59,11 +59,17 @@ class Bispec_LUT(object):
         self.I=data.variables['I'][:]
         self.Q=data.variables['Q'][:]
         self.U=data.variables['U'][:]
-    def find_mu_ix(self,VZA):
-        #return appropriate VZA index of the objects data set.
-        if VZA==-20.0:
+    def find_mu_ix(self,VZA,pro_type='original'):
+        '''
+        Return appropriate VZA index of the objects data set.
+        VZA: Viewing zenith angle in degrees
+        pro_type: Product type
+            - 'original' implies the first set of files
+            - 'DISORT' implies the second set of LUT generations that I did after the defense.
+        '''
+        if VZA==-20.0 and pro_type=='original':
             return 107
-        elif VZA==0.0:
+        elif VZA==0.0 and pro_type=='original':
             return 149
         else:
             mu_VZA=np.cos(np.deg2rad(VZA))
