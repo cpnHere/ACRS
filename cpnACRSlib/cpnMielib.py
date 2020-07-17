@@ -81,14 +81,16 @@ def read_mie_cmplt(fname):
     return d, ang, wvl, alb, qe, P11, P12, P33, P34, nr, ni, g
 
 def sgl_refidx(out_name,lam,nr,nc,D):
-    #Single ref index version. 
-    #This version save the out.nc file based on ref index.  
-    #size parameter x=piD/lam
+    '''
+    Single ref index version. 
+    This version save the out.nc file based on ref index.  
+    size parameter x=piD/lam
+    '''
     #----------------------------------
-#    lam=str(0.532)#wavelength
-#    nr=str(1.337115)#real n
-#    nc=str(1.818175e-9)#complex n
-#    D=np.linspace(0,80,10000)#diameter
+    #lam=str(0.532)#wavelength
+    #nr=str(1.337115)#real n
+    #nc=str(1.818175e-9)#complex n
+    #D=np.linspace(0,80,10000)#diameter
     D=np.hstack((np.array([10000]),D))
     #--------------------------------------
     #D=np.hstack((np.array([1]),D))
@@ -116,13 +118,14 @@ def sgl_refidx(out_name,lam,nr,nc,D):
     return out_name.split('.n',1)[0]
     
 def mul_refidx(out_name,lam, nr, nc, D):
-    #Multiple reffractive indices
-    #out_name is the output file name
-
-#    lam=[3.7,11]
-#    nr=[1.356769,1.127233 ]#Real part of n
-#    nc=[0.3589187E-02,0.9690998E-01]#imag. part of n
-#    D=np.linspace(0,60,10000)#diameter
+    '''
+    Multiple reffractive indices
+    out_name is the output file name
+    '''
+    #lam=[3.7,11]
+    #nr=[1.356769,1.127233 ]#Real part of n
+    #nc=[0.3589187E-02,0.9690998E-01]#imag. part of n
+    #D=np.linspace(0,60,10000)#diameter
     #D=[3.1415]
     D=np.hstack((np.array([np.size(D)]),D))
     #D=np.hstack((np.array([1]),D))
