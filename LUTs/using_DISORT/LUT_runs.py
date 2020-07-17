@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+********************************************
+Created on Fri Jul 10 20:58:06 2020
+by
+Chamara Rajapakshe
+(cpn.here@umbc.edu)
+********************************************
+
+- To write DISORT inputFiles for LUT generation
+- To run DISORT
+"""
+
+import numpy as np
+from scipy.special import legendre
+import os, time
+from cpnMielib import bulk_Mie,PSDs,MieSet
+from cpnRetrievalslib import Bispec_LUT
+def cal_bulk_Pmat(bM):
+    '''
+    Copied from cpnMielib to avoid computing for,
+        - all wavelengths,
+        - all Pij s (only P11 is needed)
+    '''
+    avP11=np.zeros(bM.Mie.ang.size)
+    avP12=np.zeros(bM.Mie.ang.size)
+    avP33=np.zeros(bM.Mie.ang.size)
+    avP34=np.zeros(bM.Mie.ang.size)
+    print('Computing bulk Pmat........')
+    k=1
+    fb=bM.psd.r**2*bM.Mie.qe[:,k].T*bM.Mie.alb[:,k].T*bM.psd.n_N
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P11[:,k,:])
+    avP11[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P12[:,k,:])
+    avP12[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
+    
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P33[:,k,:])
+    avP33[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
+    
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P34[:,k,:])
+    avP34[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
+    bM.bulk_P11=avP11
+    bM.bulk_P12=avP12
+    bM.bulk_P33=avP33
+    bM.bulk_P34=avP34
+if __name__ == "__main__":
+    
+    t0 = time.time()
+    inP = './inputFilesHigh2/'
+    ouP = './results/LUTsHigh2/'
+    write_input = False # True if inputFiles do not exist. This takes more time
+    NMOM = 500 # Highest Legendre coefficient
+    
+    LUT=Bispec_LUT('/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_retrievals/LUTs/',\
+                   'MODIS_LUT_extended_SZA%03d_RAA000.nc'%(60))
+    LUT.readLUT()
+    
+    new_re=np.concatenate([np.array(LUT.re),np.array((LUT.re[1:]+LUT.re[0:-1])/2)])
+    new_re.sort()
+    new_re=np.unique(new_re.round(2))
+    new_tau=np.concatenate([np.array(LUT.tau),np.array((LUT.tau[1:]+LUT.tau[0:-1])/2)])
+    new_tau.sort()
+    new_tau=np.unique(new_tau.round(2))
+
+    re_list = new_re#np.unique(LUT.re.round(2))
+    cot_list = new_tau #np.unique(LUT.tau.round(2))
+    
+    if write_input:
+        print('Reading Mie....')
+        mie = MieSet('DYCOM2_dharma_008036_mie_470_860_2p13',path='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_simulations/')
+        mie.readMie()
+        psd = PSDs("high_res_LUT",D=np.asarray(mie.d,dtype=float))
+        start=time.time()
+        for re in re_list:
+            for COT in cot_list:
+                #re = 12.0#np.arange(1,30,0.5) #12.0 # in um
+                ve = 0.05
+                #COT = 5.00
+                SZA = 60.0
+                jobid='LUT'+'_ve%0.2fre%0.2fCOT%0.2fSZA%0.4f'%(ve,re,COT,SZA)
+                psd.set_mod_gamma_norm(re,ve)
+                bM=bulk_Mie("highres_bulkMie_for_LES",psd=psd,Mie=mie)  
+                cal_bulk_Pmat(bM)
+                Ang = bM.Mie.ang
+                P11 = bM.bulk_P11
+                Mu = np.cos(np.radians(Ang))
+                
+                '''
+                # check if the phase function is normalized
+                C =-0.5*np.trapz(P11,Mu) # negative sign is because the integration should be from -1 to 1, but Mu is from 1 to -1
+                print('normalization',C)
+                if C>0.99999:
+                    print("Phase function is normalized.")
+                else:
+                    print("Warning!!: Phase function is not normalized!!")
+                '''
+                #print('Computing Legendre polynomials....')
+                N=np.arange(0,NMOM)
+                g = []
+                for n in N:
+                    f =  legendre(n)
+                    L = f(Mu)
+                    g.append(-0.5*np.trapz(P11*L,Mu))
+                g = np.array(g)
+            
+                print('Writing input file....')
+                MU0 = np.cos(np.deg2rad(SZA))
+                input_content=np.concatenate([[COT],[MU0],g])
+                np.savetxt(inP+jobid.replace('.','p')+'_inputFile.dat',input_content)
+                print(inP+jobid.replace('.','p')+'_inputFile.dat saved!')
+                print("jobid: "+jobid.replace('.','p'))
+                #t1=time.time()
+                #print('%0.2f minutes elapsed!'%((t1-t0)/60))
+                
+                print('Executing DISORT.....')
+                os.system('./disort_driver.sh '+jobid.replace('.','p')+' '+inP+' '+ouP)
+                #t2=time.time()
+                #print('%d seconds!'%(t2-t1))
+        t3=time.time()
+        print("%0.2f hours elpased!"%(t3/60/60-t0/60/60))
+            
+    else:
+        print('Executing DISORT.....')
+        i,j=0,0
+        ni,nj=re_list.size,cot_list.size
+        start=time.time()
+        for re in re_list:
+            j=0
+            for COT in cot_list:
+                #re = 12.0#np.arange(1,30,0.5) #12.0 # in um
+                ve = 0.05
+                #COT = 5.00
+                SZA = 60.0
+                jobid='LUT'+'_ve%0.2fre%0.2fCOT%0.2fSZA%0.4f'%(ve,re,COT,SZA)
+               
+               
+                os.system('./disort_driver.sh '+jobid.replace('.','p')+' '+inP+' '+ouP)
+                #t2=time.time()
+                #print('%d seconds!'%(t2-t1))
+                pc=(i*float(nj)+(j+1.0))/nj/ni*100.0
+                tm=time.time()/60-start/60
+                print("\r%0.2f%% %d minutes remaining ..."%(pc,tm/pc*100-tm),end=' ')# 
+                j+=1
+            i+=1
+            
+            
+            
