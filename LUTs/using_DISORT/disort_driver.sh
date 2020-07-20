@@ -6,6 +6,6 @@ inp=$2
 outp=$3
 cp ${inp}${jobid}_inputFile.dat inputFile.dat
 rm INTENSITY.dat
-time ./single_lay_cld.exe > single_lay_cld.out
+./single_lay_cld.exe > single_lay_cld.out
 cp -i INTENSITY.dat ${outp}${jobid}_INTENSITY.dat
 cp -i single_lay_cld.out ${outp}${jobid}_single_lay_cld.out 
