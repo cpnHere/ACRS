@@ -17,28 +17,29 @@ from scipy.special import legendre
 import os, time
 from cpnMielib import bulk_Mie,PSDs,MieSet
 from cpnRetrievalslib import Bispec_LUT
-def cal_bulk_Pmat(bM):
+def cal_bulk_Pmat(bM,band=1):
     '''
     Copied from cpnMielib to avoid computing for,
         - all wavelengths,
         - all Pij s (only P11 is needed)
+    band: 1 for 0.86 band and 2 for 2.13 band
     '''
     avP11=np.zeros(bM.Mie.ang.size)
     avP12=np.zeros(bM.Mie.ang.size)
     avP33=np.zeros(bM.Mie.ang.size)
     avP34=np.zeros(bM.Mie.ang.size)
     print('Computing bulk Pmat........')
-    k=1
-    fb=bM.psd.r**2*bM.Mie.qe[:,k].T*bM.Mie.alb[:,k].T*bM.psd.n_N
-    ft=np.einsum('i,ij->ij',fb,bM.Mie.P11[:,k,:])
+    band=1
+    fb=bM.psd.r**2*bM.Mie.qe[:,band].T*bM.Mie.alb[:,band].T*bM.psd.n_N
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P11[:,band,:])
     avP11[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
-    ft=np.einsum('i,ij->ij',fb,bM.Mie.P12[:,k,:])
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P12[:,band,:])
     avP12[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
     
-    ft=np.einsum('i,ij->ij',fb,bM.Mie.P33[:,k,:])
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P33[:,band,:])
     avP33[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
     
-    ft=np.einsum('i,ij->ij',fb,bM.Mie.P34[:,k,:])
+    ft=np.einsum('i,ij->ij',fb,bM.Mie.P34[:,band,:])
     avP34[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
     bM.bulk_P11=avP11
     bM.bulk_P12=avP12
@@ -47,10 +48,11 @@ def cal_bulk_Pmat(bM):
 if __name__ == "__main__":
     
     t0 = time.time()
-    inP = './inputFilesHigh2/'
-    ouP = './results/LUTsHigh2/'
+    inP = './inputFilesHigh2p13/'
+    ouP = './results/LUTsHigh2p13/'
     write_input = False # True if inputFiles do not exist. This takes more time
     NMOM = 500 # Highest Legendre coefficient
+    band = 2 # 1-0.86, 2-2.13
     
     LUT=Bispec_LUT('/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_retrievals/LUTs/',\
                    'MODIS_LUT_extended_SZA%03d_RAA000.nc'%(60))
@@ -81,7 +83,7 @@ if __name__ == "__main__":
                 jobid='LUT'+'_ve%0.2fre%0.2fCOT%0.2fSZA%0.4f'%(ve,re,COT,SZA)
                 psd.set_mod_gamma_norm(re,ve)
                 bM=bulk_Mie("highres_bulkMie_for_LES",psd=psd,Mie=mie)  
-                cal_bulk_Pmat(bM)
+                cal_bulk_Pmat(bM,band=band)
                 Ang = bM.Mie.ang
                 P11 = bM.bulk_P11
                 Mu = np.cos(np.radians(Ang))
@@ -103,7 +105,8 @@ if __name__ == "__main__":
                     L = f(Mu)
                     g.append(-0.5*np.trapz(P11*L,Mu))
                 g = np.array(g)
-            
+                if g[0] > 0.99999: #replacing if g>1 value
+                    g[0]=0.999999999
                 print('Writing input file....')
                 MU0 = np.cos(np.deg2rad(SZA))
                 input_content=np.concatenate([[COT],[MU0],g])
