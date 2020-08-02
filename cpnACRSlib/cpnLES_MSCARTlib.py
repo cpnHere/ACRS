@@ -620,7 +620,7 @@ class LES_field(object):
         Bex=self.extp3d#km^-1
         DZ=self.zgrd[1:]-self.zgrd[0:-1]#km
         return np.einsum('ijkl,j->kl',Bex,DZ)
-    def writeLES_field(self,f_name,dpath=None):
+    def writeLES_field(self,f_name,dpath=None,showmess=True):
         '''
         Keep f_name enter manually to avoid overite existing files.
         f_name='filename.nc'
@@ -686,7 +686,8 @@ class LES_field(object):
         data.variables['psfc2d'][:]=self.psfc2d 
    
         data.close()
-        print(f_name+' SAVED!')
+        if showmess:
+            print(f_name+' SAVED!')
         
 def collectColsMSCART(fname00,fdpath,dsNew,out_name):
     #dsNew: new POLCARTdset object
