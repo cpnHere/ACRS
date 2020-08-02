@@ -1,0 +1,56 @@
+ &TEC
+ ! Polarized RT
+ use_polarization = .true., 
+ ! Forward Monte Carlo Methods
+ IsFLEM = .true.
+ ! photon weight russian roulette
+ WMAX    =   5.000000    ,
+ WMIN    =   0.1000000   ,
+ WFAC    =   1.000000    ,
+ NRR     =   10,
+ ! phase foward truncation
+ PTAM    =  'DGaus',
+ TRUNPAR =  10.0, 
+ CHI_STS =  0.985,
+ CHI_MAX =  0.900,
+ CHI_MIN =  0.400,
+ NCHI    =  4,
+ NSTRUN  =  0,
+ nLEperCP_max = 8,
+ ! collisions forcing in thin atmosphere
+ SCAMIN = 0.0, 
+ SCLFAC = 1.0, 1.0, 
+ ! ending simulation due to many collisions
+ NSMAX  =  10000,
+ ! photon diffusion around scattering area
+ DIFR0  =  0.0000000E+00,
+ DIFR1  =  0.0000000E+00,
+ ! modification of local estimation method
+ ZETAMIN =  0.3000000    
+ ! super voxel maximum extinction section method
+ NXXS    =  1,
+ NYYS    =  1,
+ NZZS    =  1,
+ /
+ &INFO
+ ! 3D atmosphere and 2D surface info
+ field_file = "<FFILE>",
+ depol = 0.00,
+ ! sun source info
+ n_src   = 1,
+ src_flx = 1.0,
+ src_dq  = 0.0,
+ src_the = <SrZA>.0,
+ src_phi = 0.0,
+ ! detector info
+ n_PRad_xgrd = 1,
+ n_PRad_ygrd = 1,
+ n_PRad_zlv = 1,
+ n_PRad_the = 31,
+ n_PRad_phi = 2,
+ min_PRad_the = 0.0,
+ max_PRad_the = 60.0,
+ min_PRad_phi = 0.0,
+ max_PRad_phi = 180.0,
+ vec_PRad_zlv(1) = 1.0,
+ /
