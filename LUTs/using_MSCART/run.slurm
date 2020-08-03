@@ -1,32 +1,38 @@
 #!/bin/bash
-
-#SBATCH --job-name=Kokhanovsky
-#SBATCH --output=slurm-Kokhanovsky.out
+# Chamara Rajapakshe (2020)
+# To run MSCART column runs to generate high resolution LUTs
+#---------------------------------------------------------------
+#SBATCH --job-name=LUT2p13NPH1e4
+#SBATCH --output=slurm-LUT2p13NPH1e4.out
 #SBATCH --partition=batch
-#SBATCH --qos=medium+
+#SBATCH --qos=short+
 #SBATCH --mem=5000
 ##SBATCH --–ntasks-per-node=36
 ##SBATCH --dependency=afterok:7429488
-##SBATCH --array=1-500%250
+#SBATCH --array=1-5340%250
+
+#ji=$(($SLURM_ARRAY_TASK_ID))
+#ji=$(($SLURM_ARRAY_TASK_ID+5340))
+#ji=$(($SLURM_ARRAY_TASK_ID+10680))
+ji=$(($SLURM_ARRAY_TASK_ID+16020))
 
 MSCART='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART/mscart/build/intel-release-nocaf/mscart/MSCART'
-NPH=1e3
+NPH=1e4
 band='2p13'
 SZA=120
 #job=$SLURM_ARRAY_TASK_ID
 
 echo ${job} $HOSTNAME
-#fn=$(python LES_MSCART_setup.py 160 0 RICO_dharma_005044_b0p860.nc 2>&1)
-#echo ${fn}_NPH${NPH}_${job}.nc
-#${MSCART} 10 ${NPH} 0 ${fn}.nml results/b${band}/${fn}_NPH${NPH}_${job}.nc
-fn=$(python field_file_MSCART.py 2>&1)
+#---------Reading job id list from a file ----------------
+job_pool=LUT${band}_ve0p05rexCOTx.dat
+fn=$(sed ${ji}q';'d ${job_pool})
 #fn='dummy_b0p860_MSCART_SSA120_SAA000_VAA000plus'
 sed 's/<SrZA>/'$SZA'/g' dummy.nml > tmp1
-sed 's/<FFILE>/b'${band}'_fields\/'${fn}'.nc/g' tmp1 > b${band}_fields/${fn}SZA${SZA}.nml
-${MSCART} 10 ${NPH} 0 b${band}_fields/${fn}SZA${SZA}.nml results/b${band}/${fn}SZA${SZA}_NPH${NPH}.nc
+sed 's/<FFILE>/b'${band}'_fields\/'${fn}'.nc/g' tmp1 > b${band}_fields/${fn}SZA${SZA}_SAA000_VAA000plus.nml
+${MSCART} 10 ${NPH} 0 b${band}_fields/${fn}SZA${SZA}_SAA000_VAA000plus.nml results/b${band}/${fn}SZA${SZA}_SAA000_VAA000plus_NPH${NPH}.nc
 
-#Random delay to avoid I/O overflow
-#T=$(( ( RANDOM % 10 )  + 1 ))  #Generates number between 1-10
-#T=$(( 12*$T ))                 #Scales random number
-#echo "Waiting for "$T          #Display message
-#sleep $T                       #Process waits/sleeps before finishing
+Random delay to avoid I/O overflow
+T=$(( ( RANDOM % 10 )  + 1 ))  #Generates number between 1-10
+T=$(( 12*$T ))                 #Scales random number
+echo "Waiting for "$T          #Display message
+sleep $T                       #Process waits/sleeps before finishing
