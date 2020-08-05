@@ -66,11 +66,14 @@ class Bispec_LUT(object):
         pro_type: Product type
             - 'original' implies the first set of files
             - 'DISORT' implies the second set of LUT generations that I did after the defense.
+            - 'MSCART' implies the second set of LUT generations that I did after the defense.
         '''
         if VZA==-20.0 and pro_type=='original':
             return 107
         elif VZA==0.0 and pro_type=='original':
             return 149
+        elif VZA==0.0 and (pro_type=='DISORT' or pro_type='MSCART'):
+            return 0
         else:
             mu_VZA=np.cos(np.deg2rad(VZA))
             mu_ix=np.where(np.isclose(self.mu,mu_VZA,atol=0.01))
@@ -79,14 +82,17 @@ class Bispec_LUT(object):
             print('VZA:'+str(np.rad2deg(np.arccos(self.mu[mu_ix]))))
             mu_ix=input('Select VZA index:')
             return mu_ix
-    def plotLUT(self,VZA,re_lines=None,ve=0.02,figAx=None,gcolor='grey'):
+    def plotLUT(self,VZA,re_lines=None,ve=0.02,figAx=None,gcolor='grey',pro_type='original'):
         '''
         re_line: Array of re values that are needed to be shown on the LUT plot.
                 Make sure all the values are available in self.re
         figAx: (fig1,ax1)
+        pro_type: Product type
+            - 'original' implies the first set of files
+            - 'DISORT' implies the second set of LUT generations that I did after the defense.
         '''
         #plot LUT using 0.865 and 2.13
-        mu_ix=self.find_mu_ix(VZA)
+        mu_ix=self.find_mu_ix(VZA,pro_type=pro_type)
         LUT_VNIR=self.I[0,:,np.where(self.ve==ve),:,mu_ix].T
         LUT_SWIR=self.I[1,:,np.where(self.ve==ve),:,mu_ix].T
         if re_lines is None:
