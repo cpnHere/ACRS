@@ -29,7 +29,6 @@ def interp(x,xp,yp):
     
     return y 
 
-#To read these type of Dan's LUT data.
 #fname='MODIS_LUT_extended_SZA%03d_RAA000.nc'%(180-int(sza))
 class Bispec_LUT(object):
     def __init__(self,fdpath,fname):
@@ -46,7 +45,30 @@ class Bispec_LUT(object):
         self.I=[]
         self.Q=[]
         self.U=[]
-    def readLUT(self,):
+    def readLUT(self,pro_type='original'):
+        if pro_type=='original':
+            self.readorig()
+        elif pro_type=='MSCART_highres':
+            '''
+            Reading hdf5 file
+            '''
+            if self.fdpath==None:
+                f=h5py.File(self.fname,'r')
+            else:
+                f=h5py.File(self.fdpath+self.fname,'r')
+            self.fdpath=f.attrs['fdpath']
+            self.fname=f.attrs['fname']
+            self.band=f['band'][:]
+            self.ve=f['ve'][:]
+            self.tau=f['tau'][:]
+            self.re=f['re'][:]
+            self.mu0=f['mu0'].value
+            self.phi=f['phi'].value
+            self.mu=f['mu'][:]
+            self.scat=f['scat'][:]
+            self.I=f['I'][:]
+            f.close()
+    def readorig(self,):
         data=netCDF4.Dataset(self.fdpath+self.fname,'r')
         self.band=data.variables['band'][:]
         self.re=data.variables['re'][:]
@@ -59,6 +81,61 @@ class Bispec_LUT(object):
         self.I=data.variables['I'][:]
         self.Q=data.variables['Q'][:]
         self.U=data.variables['U'][:]
+    def save_LUT(self,Action='High_res_LUT_2020'):
+        '''
+        Saving as a hdf5 file
+        '''
+        f=h5py.File(self.fname,'w')
+        f.attrs['object']=str(type(self))
+        f.attrs['Action']=Action
+        f.attrs['fdpath']=self.fdpath
+        f.attrs['fname']=self.fname
+    
+        
+        PCentry=f.create_dataset('band',data=self.band)
+        PCentry.attrs['units']='um'
+        PCentry.attrs['long_name']='Wavelength'
+        
+        PCentry=f.create_dataset('re',data=self.re)
+        PCentry.attrs['units']='um'
+        PCentry.attrs['long_name']='Cloud_effective_radius'
+        
+        PCentry=f.create_dataset('ve',data=self.ve)
+        PCentry.attrs['units']='none'
+        PCentry.attrs['long_name']='Cloud_effective_variance'
+        
+        PCentry=f.create_dataset('tau',data=self.tau)
+        PCentry.attrs['units']='none'
+        PCentry.attrs['long_name']='Cloud_optical_thickness'
+        
+        PCentry=f.create_dataset('mu0',data=self.mu0)
+        PCentry.attrs['units']='none'
+        PCentry.attrs['long_name']='cosine_solar_zenith_angle'
+        
+        PCentry=f.create_dataset('phi',data=self.phi)
+        PCentry.attrs['units']='none'
+        PCentry.attrs['long_name']='relative_azimuth_angle'
+        
+        PCentry=f.create_dataset('mu',data=self.mu)
+        PCentry.attrs['units']='none'
+        PCentry.attrs['long_name']='cosine_viewing_angle'
+        
+        PCentry=f.create_dataset('scat',data=self.scat)
+        PCentry.attrs['units']='degrees'
+        PCentry.attrs['long_name']='scattering_angle'
+        
+        
+        PCentry=f.create_dataset('I',data=self.I)
+        PCentry.dims[0].label='band'
+        PCentry.dims[1].label='tau'
+        PCentry.dims[2].label='ve'
+        PCentry.dims[3].label='re'
+        PCentry.dims[4].label='mu'
+        PCentry.attrs['units']='Reflectance'
+        PCentry.attrs["long_name"]='Reflectance_LUT'
+        
+        f.close()
+        print(self.fname+' SAVED!') 
     def find_mu_ix(self,VZA,pro_type='original'):
         '''
         Return appropriate VZA index of the objects data set.
@@ -72,7 +149,7 @@ class Bispec_LUT(object):
             return 107
         elif VZA==0.0 and pro_type=='original':
             return 149
-        elif VZA==0.0 and (pro_type=='DISORT' or pro_type='MSCART'):
+        elif VZA==0.0 and (pro_type=='DISORT' or pro_type=='MSCART'):
             return 0
         else:
             mu_VZA=np.cos(np.deg2rad(VZA))
