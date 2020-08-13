@@ -46,6 +46,9 @@ class Bispec_LUT(object):
         self.Q=[]
         self.U=[]
     def readLUT(self,pro_type='original'):
+        '''
+        pro_type='original','MSCART_highres'
+        '''
         if pro_type=='original':
             self.readorig()
         elif pro_type=='MSCART_highres':
