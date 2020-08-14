@@ -66,6 +66,7 @@ if rank==0:
         yAll  =yAll+out['yAll']
         flags =flags+out['flags'] 
     saveO={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x,'flags':flags}
+    #From pol_ret_mpi.py save_to_hdf5() newly wrote to save to hdf5 directly. Use it in future.
     save_obj(saveO,data['savename']+'_MPI',rp=True)
     os.system('rm '+'mpi_data_'+data['savename']+'.pkl')
     end=time.time()

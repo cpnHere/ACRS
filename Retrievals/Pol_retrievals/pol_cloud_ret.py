@@ -9,12 +9,14 @@ Chamara Rajapakshe
 ********************************************
 Polarimetric cloud retrievals (mine)
 For LES cases
+08/14/2020:
+    save_to_hdf5 function added.
 """
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.interpolate as itp
 from textwrap import wrap
-import time, os, sys
+import time, os, sys, h5py
 
 from cpnMielib import MieSet, bulk_Mie, PSDs
 from cpnLES_MSCARTlib import LES_case, DHARMA_onmp, POLCARTdset
@@ -22,6 +24,75 @@ import cpnCommonlib as cpn
 from cpnRetrievalslib import  Pol_ret_P12Lib,Pmat
 def savefig(fig,fig_ttl):
     cpn.savefig(fig,fig_ttl,'figures/')
+def save_to_hdf5(data,les,path,filename,replace=False):
+    '''
+    data (Dictionary): {'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x,'flags':flags}
+    les: cpnLES_MSCARTlib.DHARMA_onmp
+    '''
+    if not(replace) and os.path.isfile(path+filename):
+        print("File already exists!")
+    else:
+        f=h5py.File(path+filename+'.hdf5','w')
+        
+        PCentry=f.create_dataset('ret_Re',data=data['ret_Re'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='Microns'
+        PCentry.attrs["long_name"]='Retrieved_cloud_effective_radius'
+        
+        PCentry=f.create_dataset('ret_Ve',data=data['ret_Ve'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Retrieved_cloud_effective_variance'
+        
+        PCentry=f.create_dataset('abc',data=data['abc'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.dims[2].label='parameter'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Fitting_parameter'
+        
+        PCentry=f.create_dataset('Qls',data=data['Qls'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Quality_index_Breon_2005'
+        
+        PCentry=f.create_dataset('Rsq',data=data['Rsq'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='Units'
+        PCentry.attrs["long_name"]='Minimum_R-squared_of_the_fit'
+        
+        PCentry=f.create_dataset('yAll',data=data['yAll'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.dims[2].label='x'
+        PCentry.attrs['units']='Units'
+        PCentry.attrs["long_name"]='Final_fit'
+        
+        PCentry=f.create_dataset('flags',data=data['flags'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Flags_0Success_1Fail'
+        
+        PC=f.create_dataset('x',data=data['x'])
+        PC.attrs['units']='degrees'
+        PC.attrs['long_name']='Scattering_angle'
+        
+        PC=f.create_dataset('xgrid',data=les.x/1e3)
+        PC.attrs['units']='km'
+        PC.attrs['long_name']='X_grid_centers'
+        
+        PC=f.create_dataset('ygrid',data=les.y/1e3)
+        PC.attrs['units']='km'
+        PC.attrs['long_name']='Y_grid_centers'
+        
+        f.close()
+        print(path+filename+'.hdf5 SAVED!')
+
 def ret_re1(P12_in,re_in,MieA,Q_in,ScatA,VZA,SZA):
     '''
     Exploits only the pattern of the polarize reflection.
@@ -433,6 +504,7 @@ if __name__=='__main__':
     if not(mpi):
         data={'ret_Re':ret_Re,'ret_Ve':ret_Ve,'abc':abc,'Qls':Qls,'Rsq':Rsq,'yAll':yAll,'x':x}
         print(abc)
+        #save_to_hdf5() newly wrote to save to hdf5 directly. Use it in future.
         cpn.save_obj(data,savename,rp=True)    
 
 
