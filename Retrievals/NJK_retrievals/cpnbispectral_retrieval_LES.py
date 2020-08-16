@@ -31,12 +31,86 @@ To do NJK retrievals of LES cases
 
 """
 import numpy as np
+import os, h5py
 import matplotlib.pyplot as plt
 from textwrap import wrap
 from cpnLES_MSCARTlib import LES_case
 from cpnRetrievalslib import doNJK_LES, NJK_retrievals
 import cpnCommonlib as cpn
 import sys
+def save_to_hdf5(paras,save_name,replace=False,path=''):
+    '''
+    paras: vars(cpnRetrievalslib.NJK_retrievals)
+    save_name: cpnRetrievalslib.NJK_retrievals.NJK_case_name
+    '''
+    if not(replace) and os.path.isfile(path+save_name):
+        print("File already exists!")
+    else:
+        f = h5py.File(path+save_name+'.hdf5','w')
+          
+        f.attrs['RT865_file']=paras['RT865_file']
+        f.attrs['RT2p13_file']=paras['RT2p13_file'] 
+        f.attrs['Physics_file']=paras['Physics_file'] 
+        f.attrs['LUT_file']=paras['LUT_file']
+        f.attrs['Physics_file']=paras['Physics_file']
+        f.attrs['NJK_case_name']=paras['NJK_case_name']
+    
+        PCentry=f.create_dataset('VNIR_lut',data=paras['VNIR_lut'])
+        PCentry.dims[0].label='reff_lut'
+        PCentry.dims[1].label='tau_lut'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='LUT_VNIR_reflectances'
+    
+        PCentry=f.create_dataset('SWIR_lut',data=paras['SWIR_lut'])
+        PCentry.dims[0].label='reff_lut'
+        PCentry.dims[1].label='tau_lut'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='LUT_SWIR_reflectances'
+        
+        PCentry=f.create_dataset('reff_lut',data=paras['reff_lut'])
+        PCentry.attrs['units']='um'
+        PCentry.attrs["long_name"]='Cloud_effective_radius'
+    
+        PCentry=f.create_dataset('tau_lut',data=paras['tau_lut'])
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Cloud_optical_thickness'
+    
+        PCentry=f.create_dataset('obs_SWIR_set',data=paras['obs_SWIR_set'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Observed_SWIR_reflectances'
+    
+        PCentry=f.create_dataset('obs_VNIR_set',data=paras['obs_VNIR_set'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Observed_VNIR_reflectances'
+    
+        PCentry=f.create_dataset('re',data=paras['re'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='um'
+        PCentry.attrs["long_name"]='retrieved_cloud_effective_radius'
+    
+        PCentry=f.create_dataset('tau',data=paras['tau'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='retrieved_cloud_optical_thickness'
+    
+        PCentry=f.create_dataset('flag',data=paras['flag'])
+        PCentry.dims[0].label='xgrid'
+        PCentry.dims[1].label='ygrid'
+        PCentry.attrs['units']='None'
+        PCentry.attrs["long_name"]='Flags'
+        PCentry.attrs['flag_def']=np.string_(['1-Successful retrievals',\
+                                                  '2-Reflectances are outside of the LUT space',\
+                                                  '3-AOT and COT guesses are outside of the LUT space',\
+                                                  '4-AOT and COT retrievals are outside of the LUT space',\
+                                                  '5-last two guesses have > 1e-7 difference'])
+        PCentry.attrs["long_name"]='Flag_definitions'
+        f.close()
 def savefig(fig,fig_ttl):
     cpn.savefig(fig,fig_ttl,'figures/')
 if __name__=='__main__':
@@ -90,6 +164,7 @@ if __name__=='__main__':
     #'''
     NJK_ret3D=doNJK_LES(DYC0p860_sza,DYC2p13_sza,sza,vza,check_DB=False)
     NJK_ret1D=doNJK_LES(DYC0p860_sza,DYC2p13_sza,sza,vza,RTdim='1D',check_DB=False)
+    #Use save_to_hdf5() function to directly save into hdf5 files in future.
     cpn.save_obj(NJK_ret3D,sdir+NJK_ret3D.NJK_case_name)
     cpn.save_obj(NJK_ret1D,sdir+NJK_ret1D.NJK_case_name)
     #'''
