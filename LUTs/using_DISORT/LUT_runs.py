@@ -29,7 +29,6 @@ def cal_bulk_Pmat(bM,band=1):
     avP33=np.zeros(bM.Mie.ang.size)
     avP34=np.zeros(bM.Mie.ang.size)
     print('Computing bulk Pmat........')
-    band=1
     fb=bM.psd.r**2*bM.Mie.qe[:,band].T*bM.Mie.alb[:,band].T*bM.psd.n_N
     ft=np.einsum('i,ij->ij',fb,bM.Mie.P11[:,band,:])
     avP11[:]=np.trapz(ft,bM.psd.r,axis=0)/np.trapz(fb,bM.psd.r)
@@ -50,7 +49,7 @@ if __name__ == "__main__":
     t0 = time.time()
     inP = './inputFilesHigh2p13/'
     ouP = './results/LUTsHigh2p13/'
-    write_input = False # True if inputFiles do not exist. This takes more time
+    write_input = True # True if inputFiles do not exist. This takes more time
     NMOM = 500 # Highest Legendre coefficient
     band = 2 # 1-0.86, 2-2.13
     
@@ -81,40 +80,44 @@ if __name__ == "__main__":
                 #COT = 5.00
                 SZA = 60.0
                 jobid='LUT'+'_ve%0.2fre%0.2fCOT%0.2fSZA%0.4f'%(ve,re,COT,SZA)
-                psd.set_mod_gamma_norm(re,ve)
-                bM=bulk_Mie("highres_bulkMie_for_LES",psd=psd,Mie=mie)  
-                cal_bulk_Pmat(bM,band=band)
-                Ang = bM.Mie.ang
-                P11 = bM.bulk_P11
-                Mu = np.cos(np.radians(Ang))
-                
-                '''
-                # check if the phase function is normalized
-                C =-0.5*np.trapz(P11,Mu) # negative sign is because the integration should be from -1 to 1, but Mu is from 1 to -1
-                print('normalization',C)
-                if C>0.99999:
-                    print("Phase function is normalized.")
+                if not(os.path.isfile(inP+jobid.replace('.','p')+'_inputFile.dat')):
+                    print("inputFIle not found! Generating....!")
+                    psd.set_mod_gamma_norm(re,ve)
+                    bM=bulk_Mie("highres_bulkMie_for_LES",psd=psd,Mie=mie)  
+                    cal_bulk_Pmat(bM,band=band)
+                    Ang = bM.Mie.ang
+                    P11 = bM.bulk_P11
+                    Mu = np.cos(np.radians(Ang))
+                    
+                    '''
+                    # check if the phase function is normalized
+                    C =-0.5*np.trapz(P11,Mu) # negative sign is because the integration should be from -1 to 1, but Mu is from 1 to -1
+                    print('normalization',C)
+                    if C>0.99999:
+                        print("Phase function is normalized.")
+                    else:
+                        print("Warning!!: Phase function is not normalized!!")
+                    '''
+                    #print('Computing Legendre polynomials....')
+                    N=np.arange(0,NMOM)
+                    g = []
+                    for n in N:
+                        f =  legendre(n)
+                        L = f(Mu)
+                        g.append(-0.5*np.trapz(P11*L,Mu))
+                    g = np.array(g)
+                    if g[0] > 0.99999: #replacing if g>1 value
+                        g[0]=0.999999999
+                    print('Writing input file....')
+                    MU0 = np.cos(np.deg2rad(SZA))
+                    input_content=np.concatenate([[COT],[MU0],g])
+                    np.savetxt(inP+jobid.replace('.','p')+'_inputFile.dat',input_content)
+                    print(inP+jobid.replace('.','p')+'_inputFile.dat saved!')
+                    print("jobid: "+jobid.replace('.','p'))
+                    #t1=time.time()
+                    #print('%0.2f minutes elapsed!'%((t1-t0)/60))
                 else:
-                    print("Warning!!: Phase function is not normalized!!")
-                '''
-                #print('Computing Legendre polynomials....')
-                N=np.arange(0,NMOM)
-                g = []
-                for n in N:
-                    f =  legendre(n)
-                    L = f(Mu)
-                    g.append(-0.5*np.trapz(P11*L,Mu))
-                g = np.array(g)
-                if g[0] > 0.99999: #replacing if g>1 value
-                    g[0]=0.999999999
-                print('Writing input file....')
-                MU0 = np.cos(np.deg2rad(SZA))
-                input_content=np.concatenate([[COT],[MU0],g])
-                np.savetxt(inP+jobid.replace('.','p')+'_inputFile.dat',input_content)
-                print(inP+jobid.replace('.','p')+'_inputFile.dat saved!')
-                print("jobid: "+jobid.replace('.','p'))
-                #t1=time.time()
-                #print('%0.2f minutes elapsed!'%((t1-t0)/60))
+                    print("InputFile already exists!. Going to run DISORT directly")
                 
                 print('Executing DISORT.....')
                 os.system('./disort_driver.sh '+jobid.replace('.','p')+' '+inP+' '+ouP)
