@@ -17,6 +17,7 @@ from scipy.special import legendre
 import os, time
 from cpnMielib import bulk_Mie,PSDs,MieSet
 from cpnRetrievalslib import Bispec_LUT
+from cpnCommonlib import progress_bar
 def cal_bulk_Pmat(bM,band=1):
     '''
     Copied from cpnMielib to avoid computing for,
@@ -44,14 +45,20 @@ def cal_bulk_Pmat(bM,band=1):
     bM.bulk_P12=avP12
     bM.bulk_P33=avP33
     bM.bulk_P34=avP34
+def eq_tau(tau860,Qe860,Qebnd):
+    '''
+    To compute equivalent optical depth (at 0.860 um) (refer 08/30/2017 research log)
+    '''
+    taubnd=Qebnd/Qe860*tau860
+    return taubnd
 if __name__ == "__main__":
     
     t0 = time.time()
-    inP = './inputFilesHigh2p13/'
-    ouP = './results/LUTsHigh2p13/'
+    inP = './inputFilesHigh0p860/'
+    ouP = './results/LUTsHigh0p860/'
     write_input = True # True if inputFiles do not exist. This takes more time
     NMOM = 500 # Highest Legendre coefficient
-    band = 2 # 1-0.86, 2-2.13
+    band = 1 # 1-0.86, 2-2.13
     
     LUT=Bispec_LUT('/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_retrievals/LUTs/',\
                    'MODIS_LUT_extended_SZA%03d_RAA000.nc'%(60))
@@ -73,7 +80,10 @@ if __name__ == "__main__":
         mie.readMie()
         psd = PSDs("high_res_LUT",D=np.asarray(mie.d,dtype=float))
         start=time.time()
+        ni,nj=re_list.size,cot_list.size
+        i,j=0,0
         for re in re_list:
+            j=0
             for COT in cot_list:
                 #re = 12.0#np.arange(1,30,0.5) #12.0 # in um
                 ve = 0.05
@@ -88,6 +98,8 @@ if __name__ == "__main__":
                     Ang = bM.Mie.ang
                     P11 = bM.bulk_P11
                     Mu = np.cos(np.radians(Ang))
+                    bM.cal_bulk_albnQe()
+                    SCA = bM.bulk_alb[band]
                     
                     '''
                     # check if the phase function is normalized
@@ -110,7 +122,7 @@ if __name__ == "__main__":
                         g[0]=0.999999999
                     print('Writing input file....')
                     MU0 = np.cos(np.deg2rad(SZA))
-                    input_content=np.concatenate([[COT],[MU0],g])
+                    input_content=np.concatenate([[eq_tau(COT,bM.bulk_Qe[1],bM.bulk_Qe[band])],[SCA],[MU0],g])
                     np.savetxt(inP+jobid.replace('.','p')+'_inputFile.dat',input_content)
                     print(inP+jobid.replace('.','p')+'_inputFile.dat saved!')
                     print("jobid: "+jobid.replace('.','p'))
@@ -123,6 +135,9 @@ if __name__ == "__main__":
                 os.system('./disort_driver.sh '+jobid.replace('.','p')+' '+inP+' '+ouP)
                 #t2=time.time()
                 #print('%d seconds!'%(t2-t1))
+                progress_bar(i,j,ni,nj,start) 
+                j+=1
+            i+=1
         t3=time.time()
         print("%0.2f hours elpased!"%(t3/60/60-t0/60/60))
             
