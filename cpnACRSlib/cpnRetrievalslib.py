@@ -47,11 +47,11 @@ class Bispec_LUT(object):
         self.U=[]
     def readLUT(self,pro_type='original'):
         '''
-        pro_type='original','MSCART_highres'
+        pro_type='original','MSCART_highres','DISORT_highres'
         '''
         if pro_type=='original':
             self.readorig()
-        elif pro_type=='MSCART_highres':
+        elif (pro_type=='MSCART_highres') or (pro_type=='DISORT_highres'):
             '''
             Reading hdf5 file
             '''
@@ -170,6 +170,7 @@ class Bispec_LUT(object):
         pro_type: Product type
             - 'original' implies the first set of files
             - 'DISORT' implies the second set of LUT generations that I did after the defense.
+            - 'MSCART' implies the second set of LUT generations that I did after the defense.
         '''
         #plot LUT using 0.865 and 2.13
         mu_ix=self.find_mu_ix(VZA,pro_type=pro_type)
