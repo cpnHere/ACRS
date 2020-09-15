@@ -6,6 +6,7 @@
 import netCDF4
 import numpy as np
 import os 
+from cpnLES_MSCARTlib import POLCARTdset
 
 missing_cnt=0
 
@@ -95,4 +96,11 @@ if __name__=="__main__":
         missing_cnt=0
         combine_mscart(fnames[i])
         print(str(missing_cnt)+' of missing files were replaced by '+rpl_file)
-    
+    nmlpath='./'
+    ds=POLCARTdset('dset',nmlpath)
+    ds.readMSCARTplus(fnames[0]+'.nc',fdpath=dpath,step=True)
+    ds.savePOLCARThdf5(fnames[0]+'.hdf5',dpath=dpath)
+    #To read hdffile
+    #nmlpath="path_where_*.nml_file_is_located"
+    #ds=POLCARTdset('dset',nmlpath)
+    #ds.readPOLCARThdf5(filename,dpath="*.hdf5_file_path")
