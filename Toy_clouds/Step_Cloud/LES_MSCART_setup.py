@@ -16,9 +16,8 @@ LES_MSCART Moderator
     (LES_MSCART_column_run.py uses this file. So be careful when edit)
 2017/06/01:
     for the step cloud case.
-2018/01/18:
-    color ratio method LUTs. Read a list of field files and asign one for each
-    job.
+2020/09/14:
+    Step cloud case example to Adeleke
 
 """
 import numpy as np
@@ -28,17 +27,13 @@ import sys
 #writing *.nml file for LES_MSCART (Dharma)
 s_the=float(sys.argv[1])
 vphi=float(sys.argv[2])
-field_file_i=int(sys.argv[3])
+field_file=str(sys.argv[3])
 bnd=str(sys.argv[4])
-fl=open('ACA_color_ratio_meth_LUT_field_Cre5_'+bnd+'.txt','r')
-data=fl.readlines()
-fl.close()
-field_file=data[field_file_i][:-2]
 #field_file='OP_dharma_008036_full_3_26_bins/OP_dharma_008036_full_3_26_binsy50x50.nc'
 dummy='dharma_MSCART_dummy.nml'
 src_the=s_the#120.0 Source polar angle (in right handed upward z coordinate system)
 src_phi=0.0# Source azimuth angle
-n_PRad_xgrd = 1# size of the grids as in field_file
+n_PRad_xgrd = 1500# size of the grids as in field_file
 n_PRad_ygrd = 1# size of the grids as in field_file
 n_PRad_zlv = 1 #Number of height values for detectors
 n_PRad_the = 61 #Number of viewing polar angles
@@ -57,7 +52,7 @@ fr.close()
 SZA=int(src_the)
 SAA=int(src_phi)
 VAA=int(min_PRad_phi)
-out_file=field_file[:-3]+'_MSCART_SZA%03d'%SZA+'_SAA%03d'%SAA+\
+out_file=field_file.split('.',1)[0]+'_MSCART_SZA%03d'%SZA+'_SAA%03d'%SAA+\
     '_VAA%03dplus'%VAA#+'_NmaxScat%04d'%NmaxScat
 fw=open(out_file+'.nml',"w")
 for i in np.arange(0,23,1): fw.write(data[i])
