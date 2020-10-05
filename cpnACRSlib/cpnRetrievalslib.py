@@ -47,11 +47,11 @@ class Bispec_LUT(object):
         self.U=[]
     def readLUT(self,pro_type='original'):
         '''
-        pro_type='original','MSCART_highres','DISORT_highres'
+        pro_type='original','MSCART','DISORT'
         '''
         if pro_type=='original':
             self.readorig()
-        elif (pro_type=='MSCART_highres') or (pro_type=='DISORT_highres'):
+        elif (pro_type=='MSCART') or (pro_type=='DISORT'):
             '''
             Reading hdf5 file
             '''
@@ -229,7 +229,7 @@ def plotLUT(VNIR_lut,SWIR_lut,reff_lut,tau_lut,re_lines=None,figAx=None,gcolor='
 #An object which can keep NJK retrieval data and also can do NJK retrievals by 
 #using my "retrieve_NJK" function.
 class NJK_retrievals(object):
-    def __init__(self,RT865_file,RT2p13_file,Physics_file,LUT_file):
+    def __init__(self,RT865_file=None,RT2p13_file=None,Physics_file=None,LUT_file=None):
         #Data files related to this retrievals. (Only for information purposes)
         self.RT865_file=RT865_file
         self.RT2p13_file=RT2p13_file
@@ -301,8 +301,102 @@ class NJK_retrievals(object):
             self.tau=tau
             self.flag=flag
             print('Bispectral retrievals done!')
+    def load_from_hdf5(self,fname,path=''):
 
-def doNJK_LES(LES_case_VNIR,LES_case_SWIR,sza,VZA,RTdim='3D',check_DB=True):
+            f = h5py.File(path+fname+'.hdf5','r')
+              
+            self.RT865_file=f.attrs['RT865_file']
+            self.RT2p13_file=f.attrs['RT2p13_file']
+            self.Physics_file=f.attrs['Physics_file']
+            self.LUT_file=f.attrs['LUT_file']
+            self.NJK_case_name=f.attrs['NJK_case_name']
+        
+            self.VNIR_lut=f['VNIR_lut'][:]
+            self.SWIR_lut=f['SWIR_lut'][:]
+            self.reff_lut=f['reff_lut'][:]
+            self.tau_lut=f['tau_lut'][:]
+            self.obs_SWIR_set=f['obs_SWIR_set'][:]
+            self.obs_VNIR_set=f['obs_VNIR_set'][:]
+            self.re=f['re'][:]
+            self.tau=f['tau'][:]
+            self.flag=f['flag'][:]
+            self.flag_def=f['flag'].attrs['flag_def']
+            f.close()
+    def save_to_hdf5(self,save_name,replace=False,path=''):
+        '''
+        paras: vars(cpnRetrievalslib.NJK_retrievals)
+        save_name: cpnRetrievalslib.NJK_retrievals.NJK_case_name
+        '''
+        if not(replace) and os.path.isfile(path+save_name):
+            print("File already exists!")
+        else:
+            paras=vars(self)
+            f = h5py.File(path+save_name+'.hdf5','w')
+              
+            f.attrs['RT865_file']=paras['RT865_file']
+            f.attrs['RT2p13_file']=paras['RT2p13_file'] 
+            f.attrs['Physics_file']=paras['Physics_file'] 
+            f.attrs['LUT_file']=paras['LUT_file']
+            f.attrs['Physics_file']=paras['Physics_file']
+            f.attrs['NJK_case_name']=paras['NJK_case_name']
+        
+            PCentry=f.create_dataset('VNIR_lut',data=paras['VNIR_lut'])
+            PCentry.dims[0].label='reff_lut'
+            PCentry.dims[1].label='tau_lut'
+            PCentry.attrs['units']='None'
+            PCentry.attrs["long_name"]='LUT_VNIR_reflectances'
+        
+            PCentry=f.create_dataset('SWIR_lut',data=paras['SWIR_lut'])
+            PCentry.dims[0].label='reff_lut'
+            PCentry.dims[1].label='tau_lut'
+            PCentry.attrs['units']='None'
+            PCentry.attrs["long_name"]='LUT_SWIR_reflectances'
+            
+            PCentry=f.create_dataset('reff_lut',data=paras['reff_lut'])
+            PCentry.attrs['units']='um'
+            PCentry.attrs["long_name"]='Cloud_effective_radius'
+        
+            PCentry=f.create_dataset('tau_lut',data=paras['tau_lut'])
+            PCentry.attrs['units']='None'
+            PCentry.attrs["long_name"]='Cloud_optical_thickness'
+        
+            PCentry=f.create_dataset('obs_SWIR_set',data=paras['obs_SWIR_set'])
+            PCentry.dims[0].label='xgrid'
+            PCentry.dims[1].label='ygrid'
+            PCentry.attrs['units']='None'
+            PCentry.attrs["long_name"]='Observed_SWIR_reflectances'
+        
+            PCentry=f.create_dataset('obs_VNIR_set',data=paras['obs_VNIR_set'])
+            PCentry.dims[0].label='xgrid'
+            PCentry.dims[1].label='ygrid'
+            PCentry.attrs['units']='None'
+            PCentry.attrs["long_name"]='Observed_VNIR_reflectances'
+        
+            PCentry=f.create_dataset('re',data=paras['re'])
+            PCentry.dims[0].label='xgrid'
+            PCentry.dims[1].label='ygrid'
+            PCentry.attrs['units']='um'
+            PCentry.attrs["long_name"]='retrieved_cloud_effective_radius'
+        
+            PCentry=f.create_dataset('tau',data=paras['tau'])
+            PCentry.dims[0].label='xgrid'
+            PCentry.dims[1].label='ygrid'
+            PCentry.attrs['units']='None'
+            PCentry.attrs["long_name"]='retrieved_cloud_optical_thickness'
+        
+            PCentry=f.create_dataset('flag',data=paras['flag'])
+            PCentry.dims[0].label='xgrid'
+            PCentry.dims[1].label='ygrid'
+            PCentry.attrs['units']='None'
+            PCentry.attrs["long_name"]='Flags'
+            PCentry.attrs['flag_def']=np.string_(['1-Successful retrievals',\
+                                                      '2-Reflectances are outside of the LUT space',\
+                                                      '3-AOT and COT guesses are outside of the LUT space',\
+                                                      '4-AOT and COT retrievals are outside of the LUT space',\
+                                                      '5-last two guesses have > 1e-7 difference'])
+            PCentry.attrs["long_name"]='Flag_definitions'
+            f.close()
+def doNJK_LES(LES_case_VNIR,LES_case_SWIR,sza,VZA,RTdim='3D',check_DB=True,pro_type='original'):
     '''
     To do NJK retrievals of LES cases. 1D or 3D
     ---------------------------------------------------------
@@ -313,15 +407,28 @@ def doNJK_LES(LES_case_VNIR,LES_case_SWIR,sza,VZA,RTdim='3D',check_DB=True):
     RTdim: '3D' or '1D' RT simulation instance (RT_1D). 
         For 1D case, both LES object must have RT1D instance.
     check_DB: True check data directory for previous retrieved data files
-        (/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/NJK_retrievals/data/)
+    check_DB_path:default path -> '/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/NJK_retrievals/data/'
+    pro_type: Product type
+        - 'original' implies the first set of files
+        - 'DISORT' implies the second set of LUT generations that I did after the defense
+        - 'MSCART' implies the second set of LUT generations that I did after the defense
     return: 
         cpnRetrievalslib.NJK_retrievals object
+
     '''
-    fdpath='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_retrievals/LUTs/'
-    fname='MODIS_LUT_extended_SZA%03d_RAA000.nc'%(180-int(sza))
+    check_DB_path='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/NJK_retrievals/data/'
+    if pro_type=='original':
+        fdpath='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_retrievals/LUTs/'
+        fname='MODIS_LUT_extended_SZA%03d_RAA000.nc'%(180-int(sza))
+    elif pro_type=='DISORT':
+        if sza!='120':
+            print('DISORT LUT only has for sza=0 nadir!!')
+        else:
+            fdpath='/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LUTs/using_DISORT/'
+            fname='DISORTLESLUT_highres_SZA120_nadir_LowRe5p1.hdf5'
     LUT=Bispec_LUT(fdpath,fname)
-    LUT.readLUT()
-    mu_ix=LUT.find_mu_ix(VZA)
+    LUT.readLUT(pro_type=pro_type)
+    mu_ix=LUT.find_mu_ix(VZA,pro_type=pro_type)
     LUT_VNIR=LUT.I[0,:,1,:,mu_ix].T
     LUT_SWIR=LUT.I[1,:,1,:,mu_ix].T
 
@@ -337,7 +444,7 @@ def doNJK_LES(LES_case_VNIR,LES_case_SWIR,sza,VZA,RTdim='3D',check_DB=True):
         obs_SWIR_set=LES_case_SWIR.RT1D.MeanPRad[obVZA_ix,:,:,0]
         obs_VNIR_set=LES_case_VNIR.RT1D.MeanPRad[obVZA_ix,:,:,0]
     Physics_file=LES_case_VNIR.RT_field.dpath+LES_case_VNIR.RT_field.fname
-    LUT_file='/umbc/xfs1/zzbatmos/users/charaj1/LES_MSCART_retrievals/LUTs/'+'MODIS_LUT_extended_SZA%03d_RAA000.nc'%(180-int(sza))
+    LUT_file=fdpath+fname
     
     NJK_ret=NJK_retrievals(RT865_file,RT2p13_file,Physics_file,LUT_file)
     NJK_ret.VNIR_lut=LUT_VNIR
@@ -347,10 +454,8 @@ def doNJK_LES(LES_case_VNIR,LES_case_SWIR,sza,VZA,RTdim='3D',check_DB=True):
     NJK_ret.obs_SWIR_set=obs_SWIR_set
     NJK_ret.obs_VNIR_set=obs_VNIR_set
     NJK_ret.set_case_name()
-    if check_DB and os.path.isfile('/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/NJK_retrievals/data/'+\
-                   NJK_ret.NJK_case_name+'.pkl'):
-        print('Retrievals already exist!: '+'/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/Retrievals/NJK_retrievals/data/'+\
-                   NJK_ret.NJK_case_name+'.pkl')
+    if check_DB and os.path.isfile(check_DB_path+NJK_ret.NJK_case_name+'.pkl'):
+        print('Retrievals already exist!: '+check_DB_path+NJK_ret.NJK_case_name+'.pkl')
         logic=input('Do you want to continue? y/n:')
     else:
         logic='y'
