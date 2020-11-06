@@ -429,8 +429,14 @@ def doNJK_LES(LES_case_VNIR,LES_case_SWIR,sza,VZA,RTdim='3D',check_DB=True,pro_t
     LUT=Bispec_LUT(fdpath,fname)
     LUT.readLUT(pro_type=pro_type)
     mu_ix=LUT.find_mu_ix(VZA,pro_type=pro_type)
-    LUT_VNIR=LUT.I[0,:,1,:,mu_ix].T
-    LUT_SWIR=LUT.I[1,:,1,:,mu_ix].T
+    if pro_type=='original':
+        LUT_VNIR=LUT.I[0,:,1,:,mu_ix].T
+        LUT_SWIR=LUT.I[1,:,1,:,mu_ix].T
+    elif pro_type=='DISORT':
+        LUT_VNIR=LUT.I[0,:,0,:,mu_ix].T #band,tau,ve,re,mu
+        LUT_SWIR=LUT.I[1,:,0,:,mu_ix].T #band,tau,ve,re,mu
+
+    
 
     obVZA_ix=LES_case_VNIR.RT.find_obVZA_ix(VZA)
     if RTdim=='3D':
