@@ -109,6 +109,43 @@ class POLCARTdset(object):
         self.RMSEPRad=[]
         self.pnt=[]
         
+    def readMSCARTmulVAA(self,fname,fdpath=""):
+        """
+        To read MSCART outputs with multiple viewing azimuth angles.
+        You **might** be able to read any MSCART output. 
+        """
+        data=netCDF4.Dataset(fdpath+fname,'r')
+        self.MeanTiming=np.squeeze(data.variables['MeanTiming'][:])
+        MeanPRad=np.squeeze(data.variables['MeanPRad'][:])
+        RMSEPRad=np.squeeze(data.variables['RMSEPRad'][:])
+        self.NPH=(fname.split('_NPH',1)[1]).split('.',1)[0]
+        data.close()
+        fr=open(self.nmldpath+fname.split('_NPH',1)[0]+'.nml','r')
+        d2=fr.readlines()[:]
+        fr.close()
+        self.SZA=float(d2[42].split('= ',1)[1].split(',',1)[0])
+        self.SAA=float(d2[43].split('= ',1)[1].split(',',1)[0])
+        n_view_the=int(d2[48].split('= ',1)[1].split(',',1)[0])
+        n_view_phi=int(d2[49].split('= ',1)[1].split(',',1)[0])
+        mn_view_the=float(d2[50].split('= ',1)[1].split(',',1)[0])
+        mx_view_the=float(d2[51].split('= ',1)[1].split(',',1)[0])
+        vamin=float(d2[52].split('= ',1)[1].split(',',1)[0])
+        vamax=float(d2[53].split('= ',1)[1].split(',',1)[0])
+        self.VAA=np.linspace(vamin,vamax,n_view_phi)
+        self.VZA=np.linspace(mn_view_the,mx_view_the,n_view_the)
+        RAA = self.SAA-self.VAA
+        selfScatA=[scat_ang(self.SZA,self.VZA,raa) for raa in RAA]
+        self.MeanPRad=np.zeros((self.VAA.size,self.VZA.size,MeanPRad.shape[1],MeanPRad.shape[2],MeanPRad.shape[3]),dtype=float)
+        self.RMSEPRad=np.zeros((self.VAA.size,self.VZA.size,MeanPRad.shape[1],MeanPRad.shape[2],MeanPRad.shape[3]),dtype=float)
+        
+        self.MeanPRad[0,:]=MeanPRad[0::n_view_phi,:]
+        self.MeanPRad[1,:]=MeanPRad[1::n_view_phi,:]
+        self.MeanPRad[2,:]=MeanPRad[2::n_view_phi,:]
+        self.MeanPRad[3,:]=MeanPRad[3::n_view_phi,:]
+        self.RMSEPRad[0,:]=RMSEPRad[0::n_view_phi,:]
+        self.RMSEPRad[1,:]=RMSEPRad[1::n_view_phi,:]
+        self.RMSEPRad[2,:]=RMSEPRad[2::n_view_phi,:]
+        self.RMSEPRad[3,:]=RMSEPRad[3::n_view_phi,:]
 
     def readMSCARTplus(self,fname,fdpath=None,bm=False,clm=False,prnt=True,\
                        step=False):
