@@ -34,7 +34,7 @@ n_PRad_xgrd = 144# size of the grids as in field_file
 n_PRad_ygrd = 144# size of the grids as in field_file
 n_PRad_zlv = 1 #Number of height values for detectors
 n_PRad_the = 61 #Number of viewing polar angles
-n_PRad_phi = 2 # Number of veiwing azimuth angles
+n_PRad_phi = 4 # Number of veiwing azimuth angles
 min_PRad_the = 0.0 # Minimum viewing polar angle
 max_PRad_the = 60.0 # Max viewing polar angle
 min_PRad_phi = vphi # Minimum viewing azimuth angle
@@ -48,9 +48,16 @@ fr.close()
 
 SZA=int(src_the)
 SAA=int(src_phi)
+'''
+# When only using 2 azimuth angles (0,180) (Princial plane)
 VAA=int(min_PRad_phi)
 out_file=field_file[:-3]+'_MSCART_SZA%03d'%SZA+'_SAA%03d'%SAA+\
     '_VAA%03dplus'%VAA
+'''
+#Multiple VAAs (larger than 2)
+out_file=field_file[:-3]+'_MSCART_SZA%03d'%SZA+'_SAA%03d'%SAA+\
+    '_Nvaa%03d'%n_PRad_phi
+
 fw=open(out_file+'.nml',"w")
 for i in np.arange(0,23,1): fw.write(data[i])
 wstr=' NSMAX  =  '+str(NmaxScat)+',\n'
