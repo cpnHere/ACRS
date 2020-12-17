@@ -51,10 +51,19 @@ import time, copy
 import matplotlib.pyplot as plt
 from textwrap import wrap
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
-from cpnCommonlib import movingaverage2D
+#from cpnCommonlib import movingaverage2D
 from cpnMielib import MieSet
 from cpnMicrophylib import scat_ang
 
+def movingaverage2D(values,window):
+    '''
+    Return a new array with the moving averaged values of the given window.
+    values: The 2D array of the values
+    window: (integer) Dimension of a side of the moving average window. (ex. 3 for 3by3 moving average)
+    '''    
+    weights = np.ones((window,window),dtype=float)/window/window
+    sma = signal.convolve2d(values, weights, mode='same',boundary='wrap')
+    return sma
 def add_cloud_mask(dict_atr,cldM,dictionary=False):
     '''
     A genralized function to add a cloud mask.
