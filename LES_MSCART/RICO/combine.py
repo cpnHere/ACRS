@@ -111,8 +111,15 @@ if invalid_cnt==0:
     print('No files with invalid radiances!!')
     f_name=fnames[0]
     case=POLCARTdset('LES','/umbc/xfs1/zzbatmos/users/charaj1/taki/ACRS/LES_MSCART/RICO/')
-    case.readMSCARTplus(f_name+'.nc',fdpath=dpath,step=True)
-    case.savePOLCARThdf5(case.fdpath+case.fname.split('.',1)[0]+'.hdf5',pc_format=pc_format,action=action)
+    if len(case.VAA)==2:
+        #Principal plane. Combine VAA 0 and 180 together
+        case.readMSCARTplus(f_name+'.nc',fdpath=dpath,step=True)
+        case.savePOLCARThdf5(case.fdpath+case.fname.split('.',1)[0]+'.hdf5',pc_format=pc_format,action=action)
+    else:
+        #Has more 2 VAAs.
+        case.cc3D='mulVAA'
+        case.readMSCARTmulVAA(f_name+'.nc',fdpath=dpath)
+        case.savePOLCARThdf5(case.fdpath+case.fname.split('.',1)[0]+'.hdf5',pc_format=pc_format,action=action)
 else:
     print('Following files have invalid radiances!!')
     print(invalid_files)
