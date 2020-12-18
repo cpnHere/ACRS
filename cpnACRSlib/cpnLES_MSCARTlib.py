@@ -49,6 +49,7 @@ import h5py, os, sys
 #from pyhdf.SD import SD
 import time, copy
 import matplotlib.pyplot as plt
+import scipy.signal as signal
 from textwrap import wrap
 from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 #from cpnCommonlib import movingaverage2D
@@ -106,7 +107,7 @@ class POLCARTdset(object):
     def __init__(self,dset,nmldpath):
         self.nmldpath=nmldpath
         self.dset=dset
-        self.cc3D=[]#1D 3D or step
+        self.cc3D=[]#'1D' '3D' 'step_1D' 'step_3D' 'mulVAA'(Multiple VAAs)
         self.SZA=[]#source zenith angle
         self.SAA=[]#source azimuth angle
         self.VZA=[]
@@ -123,6 +124,8 @@ class POLCARTdset(object):
         To read MSCART outputs with multiple viewing azimuth angles.
         You **might** be able to read any MSCART output. 
         """
+        self.fname = fname
+        self.fdpath = fdpath
         data=netCDF4.Dataset(fdpath+fname,'r')
         self.MeanTiming=np.squeeze(data.variables['MeanTiming'][:])
         MeanPRad=np.squeeze(data.variables['MeanPRad'][:])
@@ -143,7 +146,7 @@ class POLCARTdset(object):
         self.VAA=np.linspace(vamin,vamax,n_view_phi)
         self.VZA=np.linspace(mn_view_the,mx_view_the,n_view_the)
         RAA = self.SAA-self.VAA
-        selfScatA=[scat_ang(self.SZA,self.VZA,raa) for raa in RAA]
+        self.ScatA=[scat_ang(self.SZA,self.VZA,raa) for raa in RAA]
         self.MeanPRad=np.zeros((self.VAA.size,self.VZA.size,MeanPRad.shape[1],MeanPRad.shape[2],MeanPRad.shape[3]),dtype=float)
         self.RMSEPRad=np.zeros((self.VAA.size,self.VZA.size,MeanPRad.shape[1],MeanPRad.shape[2],MeanPRad.shape[3]),dtype=float)
         
@@ -354,6 +357,25 @@ class POLCARTdset(object):
             PC.dims[2].label='IQUV'
             PC.attrs['units']='Radiance'
             PC.attrs["long_name"]='RMSE_Polarized_Radiance'
+        elif self.cc3D=='mulVAA':
+            #To handle MSCART outputs with multiple viewing azimuth angles
+            PCentry=f.create_dataset('MeanPRad',data=self.MeanPRad)
+            PCentry.dims[0].label='VAA'
+            PCentry.dims[1].label='VZA'
+            PCentry.dims[2].label='xgrid'
+            PCentry.dims[3].label='ygrid'
+            PCentry.dims[4].label='IQUV'
+            PCentry.attrs['units']='Radiance'
+            PCentry.attrs["long_name"]='Mean_Polarized_Radiance'
+
+            PC=f.create_dataset('RMSEPRad',data=self.RMSEPRad)
+            PC.dims[0].label='VAA'
+            PC.dims[1].label='VZA'
+            PC.dims[2].label='xgrid'
+            PC.dims[3].label='ygrid'
+            PC.dims[4].label='IQUV'
+            PC.attrs['units']='Radiance'
+            PC.attrs["long_name"]='RMSE_Polarized_Radiance'
         else:
             PCentry=f.create_dataset('MeanPRad',data=self.MeanPRad)
             PCentry.dims[0].label='VZA'
@@ -378,16 +400,22 @@ class POLCARTdset(object):
         PC=f.create_dataset('SZA',data=np.array([self.SZA]))
         PC.attrs['units']='degrees'
         PC.attrs['long_name']='Source(ray)_Zenith_Angle'
-
+        
         PC=f.create_dataset('VZA', data=self.VZA)
         PC.attrs['units']='degrees'
-        PC.attrs['long_name']='Viewing_Zenith_Angle_negative_VAA180'
+        if self.cc3D == 'mulVAA':
+            PC.attrs['long_name']='Viewing_Zenith_Angle'
+        else:
+            PC.attrs['long_name']='Viewing_Zenith_Angle_negative_VAA180'
 
         PC=f.create_dataset('VAA',data=self.VAA)
         PC.attrs['units']='degrees'
         PC.attrs['long_name']='Viewing_Azimuth_Angle'
         
         PC=f.create_dataset('ScatA',data=self.ScatA)
+        if self.cc3D == 'mulVAA':
+            PC.dims[0].label='VAA'
+            PC.dims[1].label='VZA'
         PC.attrs['units']='degrees'
         PC.attrs['long_name']='(Apparent)Scattering_Angle'
 
