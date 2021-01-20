@@ -24,7 +24,7 @@ import sys
 
 #writing *.nml file for LES_MSCART (Dharma)
 s_the=float(sys.argv[1])
-vphi=float(sys.argv[2])
+vza=float(sys.argv[2])
 field_file=str(sys.argv[3])
 #field_file='OP_dharma_008036_full_3_26_bins/OP_dharma_008036_full_3_26_binsy50x50.nc'
 dummy='dharma_MSCART_dummy.nml'
@@ -33,12 +33,12 @@ src_phi=0.0# Source azimuth angle
 n_PRad_xgrd = 144# size of the grids as in field_file
 n_PRad_ygrd = 144# size of the grids as in field_file
 n_PRad_zlv = 1 #Number of height values for detectors
-n_PRad_the = 61 #Number of viewing polar angles
-n_PRad_phi = 4 # Number of veiwing azimuth angles
-min_PRad_the = 0.0 # Minimum viewing polar angle
-max_PRad_the = 60.0 # Max viewing polar angle
-min_PRad_phi = vphi # Minimum viewing azimuth angle
-max_PRad_phi = vphi+180.0 # Max viewing azimuth angle
+n_PRad_the = 1 #Number of viewing polar angles
+n_PRad_phi = 72 # Number of veiwing azimuth angles
+min_PRad_the = vza # Minimum viewing polar angle
+max_PRad_the = vza+1.0 # Max viewing polar angle
+min_PRad_phi = 0.0 # Minimum viewing azimuth angle
+max_PRad_phi = 360.0 # Max viewing azimuth angle
 vec_PRad_zlv1 = 3.000000 # position of the detector
 NmaxScat=8000
 
@@ -56,7 +56,7 @@ out_file=field_file[:-3]+'_MSCART_SZA%03d'%SZA+'_SAA%03d'%SAA+\
 '''
 #Multiple VAAs (larger than 2)
 out_file=field_file[:-3]+'_MSCART_SZA%03d'%SZA+'_SAA%03d'%SAA+\
-    '_Nvaa%03d'%n_PRad_phi
+    '_Nvaa72VZA%03d'%vza
 
 fw=open(out_file+'.nml',"w")
 for i in np.arange(0,23,1): fw.write(data[i])

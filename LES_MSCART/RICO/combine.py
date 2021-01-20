@@ -20,7 +20,7 @@ def read_mscart(file_name):
     print(file_name)
     try:
         MC = netCDF4.Dataset(file_name, 'r')
-    except FileNotFoundError:
+    except RuntimeError:
         MC = netCDF4.Dataset(rpl_file,'r')
         print('-------MISSING!!!------  '+str(missing_cnt))
         if missing_cnt==0:
