@@ -113,39 +113,6 @@ def rmvxtrms(dM):
 #        print('Zero size dM!!!')
     return dM
     
-def save_obj(obj, name, rp=False):
-    '''
-    To temporally save object/dictonary
-    File names will be OVERWRITTEN!!
-    rp=True to force replace existing file
-    '''
-    if not(os.path.isfile(name+'.pkl')):
-        rp=True
-    if not(rp) and os.path.isfile(name+'.pkl'):
-        usr=input('Replace existing file?: ')
-        if usr=='y':
-            rp=True
-    if rp:
-        classes=pkl_classes()
-        classes.class_names=type(obj)
-        with open(name + '.pkl', 'wb') as f:
-            pickle.dump(classes,f,pickle.HIGHEST_PROTOCOL)
-            pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
-            f.close()
-        print(name + '.pkl SAVED!')
-
-def load_obj(name,encoding='ASCII'):
-    '''
-    To load temporally saved object/dictionary
-    encoding 'ASCII' is the default for pickle.load. 
-        Change it 'latin1 to read Python2 objects from Python 3 
-    '''
-    with open(name + '.pkl', 'rb') as f:
-        classes=pickle.load(f)
-        print('Attempting to read '+str(classes.class_names))
-        obj=pickle.load(f,encoding=encoding)
-        f.close()
-    return obj
 def idx_closest(arr,val):
     '''
     Returns the clossest index of arr to value val.
@@ -177,30 +144,6 @@ def write_latex_table(X,table_name,colnames=None,rownames=None,stl='%0.2f',row_s
             f1.write('\hline\n')
     f1.write('\hline\n')
     f1.close()
-def panda_to_latex_table(df,tab_name,rp=False, index=False, float_format='%0.2f'):
-    '''
-    df: DataFrame
-        df= {'row1col1' :['col2','col3','col4'],\
-             'row2'     :[x,x,x],\
-             'row3'     :[x,x,x],\
-             'row4'     :[x,x,x]}
-    tab_name: 'table_name.dat'
-    To save as latex tables
-    Usage:
-    usepackage(booktabs)
-    input(table_name)
-    '''
-    if not(os.path.isfile(tab_name)):
-        rp=True
-    if not(rp) and os.path.isfile(tab_name):
-        usr=input('Replace existing file?: ')
-        if usr=='y':
-            rp=True
-    if rp:
-        f1=open(tab_name,'w')
-        f1.write(df.to_latex(index=index,float_format=float_format))
-        f1.close()
-        print(tab_name + ' SAVED!')
 '''
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FIGURES
